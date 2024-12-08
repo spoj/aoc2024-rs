@@ -38,31 +38,30 @@ pub fn part2(input: &str) {
 }
 
 fn strict_safe(report: &[isize]) -> bool {
-    // count_fast!('.');
-
-    let all_dec = report.windows(2).all(|ab| {
-        let c = ab[0] - ab[1];
-        c == 1 || c == 2 || c == 3
-    });
-    let all_inc = report.windows(2).all(|ab| {
-        let c = ab[0] - ab[1];
-        c == -1 || c == -2 || c == -3
-    });
-    all_inc || all_dec
+    report.windows(3).all(|ab| {
+        let d1 = ab[0] - ab[1];
+        let d2 = ab[1] - ab[2];
+        d1.abs() >= 1
+            && d1.abs() <= 3
+            && d2.abs() >= 1
+            && d2.abs() <= 3
+            && d1.signum() == d2.signum()
+    })
 }
 
 fn relax_safe(report: &[isize]) -> bool {
     // count_slow!('#');
 
     let mut copy = report[1..].to_owned();
-    if strict_safe(&copy) {
-        return true;
-    }
-    for i in 0..copy.len() {
-        copy[i] = report[i];
+    let mut i = 0;
+    loop {
         if strict_safe(&copy) {
             return true;
+        } else if i == copy.len() {
+            break;
         }
+        copy[i] = report[i];
+        i += 1;
     }
     false
 }
