@@ -77,15 +77,24 @@ fn d08() {
     part2(INPUT);
     println!();
 }
+fn d09() {
+    use aoc2024_rs::d09::*;
+    part1(SAMPLE);
+    part1(INPUT);
+    part2(SAMPLE);
+    part2(INPUT);
+    println!();
+}
 
 fn main() {
-    d00();
-    d01();
-    d02();
-    d03();
-    d04();
-    d05();
-    d06();
-    d07();
-    d08();
+    // d00();
+    // d01();
+    // d02();
+    // d03();
+    // d04();
+    // d05();
+    // d06();
+    // d07();
+    // d08();
+    d09();
 }
