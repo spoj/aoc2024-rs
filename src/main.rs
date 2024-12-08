@@ -71,21 +71,21 @@ fn d07() {
 
 fn d08() {
     use aoc2024_rs::d08::*;
-    part1(SAMPLE);
+    part1(SAMPLE1);
     part1(INPUT);
-    part2(SAMPLE);
+    part2(SAMPLE1);
     part2(INPUT);
     println!();
 }
 
 fn main() {
-    // d00();
-    // d01();
-    // d02();
-    // d03();
-    // d04();
-    // d05();
-    // d06();
-    // d07();
+    d00();
+    d01();
+    d02();
+    d03();
+    d04();
+    d05();
+    d06();
+    d07();
     d08();
 }
