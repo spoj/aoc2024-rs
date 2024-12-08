@@ -1,6 +1,6 @@
 #![allow(dead_code, unused_imports)]
 
-fn run_d00() {
+fn d00() {
     use aoc2024_rs::d00::*;
     // part1(SAMPLE);
     // part1(INPUT);
@@ -9,7 +9,7 @@ fn run_d00() {
     println!();
 }
 
-fn run_d01() {
+fn d01() {
     use aoc2024_rs::d01::*;
     part1(SAMPLE);
     part1(INPUT);
@@ -18,7 +18,7 @@ fn run_d01() {
     println!();
 }
 
-fn run_d02() {
+fn d02() {
     use aoc2024_rs::d02::*;
     part1(SAMPLE);
     part1(INPUT);
@@ -27,7 +27,7 @@ fn run_d02() {
     println!();
 }
 
-fn run_d03() {
+fn d03() {
     use aoc2024_rs::d03::*;
     part1(SAMPLE);
     part1(INPUT);
@@ -35,7 +35,7 @@ fn run_d03() {
     part2(INPUT);
     println!();
 }
-fn run_d04() {
+fn d04() {
     use aoc2024_rs::d04::*;
     part1(SAMPLE);
     part1(INPUT);
@@ -43,7 +43,7 @@ fn run_d04() {
     part2(INPUT);
     println!();
 }
-fn run_d05() {
+fn d05() {
     use aoc2024_rs::d05::*;
     part1(SAMPLE);
     part1(INPUT);
@@ -51,7 +51,7 @@ fn run_d05() {
     part2(INPUT);
     println!();
 }
-fn run_d06() {
+fn d06() {
     use aoc2024_rs::d06::*;
     part1(SAMPLE);
     part1(INPUT);
@@ -60,7 +60,7 @@ fn run_d06() {
     println!();
 }
 
-fn run_d07() {
+fn d07() {
     use aoc2024_rs::d07::*;
     part1(SAMPLE);
     part1(INPUT);
@@ -69,13 +69,23 @@ fn run_d07() {
     println!();
 }
 
+fn d08() {
+    use aoc2024_rs::d08::*;
+    part1(SAMPLE);
+    part1(INPUT);
+    part2(SAMPLE);
+    part2(INPUT);
+    println!();
+}
+
 fn main() {
-    // run_d00();
-    // run_d01();
-    // run_d02();
-    // run_d03();
-    // run_d04();
-    // run_d05();
-    // run_d06();
-    run_d07();
+    d00();
+    d01();
+    d02();
+    d03();
+    d04();
+    d05();
+    d06();
+    d07();
+    d08();
 }
