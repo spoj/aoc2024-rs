@@ -33,9 +33,9 @@ pub fn part1(input: &str) {
         .lines()
         .map(|s| {
             iter::empty()
-                .chain(*b"x")
+                .chain(vec![b'x';s.bytes().len()])
                 .chain(s.bytes())
-                .chain(*b"x")
+                .chain(vec![b'x';s.bytes().len()])
                 .collect_vec()
         })
         .collect_vec();
