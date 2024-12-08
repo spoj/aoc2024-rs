@@ -51,10 +51,6 @@ pub fn part1(input: &str) {
                 .collect_vec()
         })
         .collect_vec();
-    // let w = input[0].len();
-    // let h = input.len();
-    // let ww = w as isize;
-    // let hh = h as isize;
     let input_one = input.concat();
     let mut ans = vec![false; input_one.len()];
     for (i, a) in input_one.iter().enumerate() {
@@ -87,10 +83,6 @@ pub fn part2(input: &str) {
                 .collect_vec()
         })
         .collect_vec();
-    // let w = input[0].len();
-    // let h = input.len();
-    // let ww = w as isize;
-    // let hh = h as isize;
     let input_one = input.concat();
     let mut ans = vec![false; input_one.len()];
     for (i, a) in input_one.iter().enumerate() {
