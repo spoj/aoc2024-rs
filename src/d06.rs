@@ -49,6 +49,19 @@ impl Board {
             h,
         }
     }
+    fn parse(input: &str) -> Self {
+        let input = input
+            .lines()
+            .map(|s| {
+                iter::empty()
+                    .chain(vec![b'x'; s.bytes().len()])
+                    .chain(s.bytes())
+                    .chain(vec![b'x'; s.bytes().len()])
+                    .collect_vec()
+            })
+            .collect_vec();
+        Board::new(input)
+    }
     fn turn(&self, dir: isize) -> isize {
         if dir == -self.w {
             1
@@ -72,17 +85,7 @@ impl Board {
 }
 
 pub fn part1(input: &str) {
-    let input: Vec<Vec<_>> = input
-        .lines()
-        .map(|s| {
-            iter::empty()
-                .chain(vec![b'x'; s.bytes().len()])
-                .chain(s.bytes())
-                .chain(vec![b'x'; s.bytes().len()])
-                .collect_vec()
-        })
-        .collect_vec();
-    let mut board = Board::new(input);
+    let mut board = Board::parse(input);
     let mut pos = board.data.iter().position(|x| *x == b'^').unwrap() as isize;
     let mut dir = board.turn(0);
     while board.in_bound(pos) {
@@ -129,17 +132,7 @@ pub fn visited(input: &str) -> Vec<isize> {
 
 pub fn part2(input: &str) {
     let visited = visited(input);
-    let input: Vec<Vec<_>> = input
-        .lines()
-        .map(|s| {
-            iter::empty()
-                .chain(vec![b'x'; s.bytes().len()])
-                .chain(s.bytes())
-                .chain(vec![b'x'; s.bytes().len()])
-                .collect_vec()
-        })
-        .collect_vec();
-    let mut board = Board::new(input);
+    let mut board = Board::parse(input);
     let mut day6_part2 = 0;
     for i in visited {
         let t = board.data[i as usize];
