@@ -28,91 +28,146 @@ pub static SAMPLE2: &str = r#"....#.....
 
 pub static INPUT: &str = include_str!("../data/d06.txt");
 
+#[derive(Clone)]
+struct Board {
+    data: Vec<u8>,
+    visited: Vec<bool>,
+    w: isize,
+    h: isize,
+}
+
+impl Board {
+    fn new(input: Vec<Vec<u8>>) -> Self {
+        let data = input.concat();
+        let w = input[0].len() as isize;
+        let h = input.len() as isize;
+        let visited = vec![false; data.len()];
+        Self {
+            data,
+            visited,
+            w,
+            h,
+        }
+    }
+    fn turn(&self, dir: isize) -> isize {
+        if dir == -self.w {
+            1
+        } else if dir == 1 {
+            self.w
+        } else if dir == self.w {
+            -1
+        } else {
+            -self.w
+        }
+    }
+    fn mark_visit(&mut self, pos: isize) {
+        self.visited[pos as usize] = true
+    }
+    fn count_visited(&self) -> usize {
+        self.visited.iter().filter(|x| **x).count()
+    }
+    fn in_bound(&self, pos: isize) -> bool {
+        pos >= 0 && pos < self.w * self.h && self.data[pos as usize] != b'x'
+    }
+}
+
 pub fn part1(input: &str) {
     let input: Vec<Vec<_>> = input
         .lines()
         .map(|s| {
             iter::empty()
-                .chain(vec![b'x';s.bytes().len()])
+                .chain(vec![b'x'; s.bytes().len()])
                 .chain(s.bytes())
-                .chain(vec![b'x';s.bytes().len()])
+                .chain(vec![b'x'; s.bytes().len()])
                 .collect_vec()
         })
         .collect_vec();
-    let w = input[0].len();
-    let h = input.len();
-    let ww = w as isize;
-    let hh = h as isize;
-    let input_one = input.concat();
-    let mut visited = vec![false; (ww * hh) as usize];
-    let dirs = [-ww, 1, ww, -1];
-    let mut cursor = input_one.iter().position(|x| *x == b'^').unwrap() as isize;
-    'a: for dir in dirs.iter().cycle() {
-        // dbg!((cursor % ww, cursor / ww));
-        'b: loop {
-            if cursor < 0 || cursor >= ww * hh || input_one[(cursor) as usize] == b'x' {
-                break 'a;
-            } else if input_one.get((cursor + *dir) as usize) == Some(&b'#') {
-                visited[cursor as usize] = true;
-                break 'b;
-            } else {
-                visited[cursor as usize] = true;
-                cursor += dir;
-            }
+    let mut board = Board::new(input);
+    let mut pos = board.data.iter().position(|x| *x == b'^').unwrap() as isize;
+    let mut dir = board.turn(0);
+    while board.in_bound(pos) {
+        board.mark_visit(pos);
+        if board.data.get((pos + dir) as usize) == Some(&b'#') {
+            dir = board.turn(dir);
+        } else {
+            pos += dir;
         }
     }
-    let day6_part1 = visited.iter().filter(|x| **x).count();
+    let day6_part1 = board.count_visited();
     dbg!(day6_part1);
 }
-
-pub fn part2(input: &str) {
+pub fn visited(input: &str) -> Vec<isize> {
     let input: Vec<Vec<_>> = input
         .lines()
         .map(|s| {
             iter::empty()
-                .chain(*b"x")
+                .chain(vec![b'x'; s.bytes().len()])
                 .chain(s.bytes())
-                .chain(*b"x")
+                .chain(vec![b'x'; s.bytes().len()])
                 .collect_vec()
         })
         .collect_vec();
-    let w = input[0].len();
-    let h = input.len();
-    let ww = input[0].len() as isize;
-    let hh = input.len() as isize;
-    let mut input_one = input.concat();
+    let mut board = Board::new(input);
+    let mut pos = board.data.iter().position(|x| *x == b'^').unwrap() as isize;
+    let mut dir = board.turn(0);
+    while board.in_bound(pos) {
+        board.mark_visit(pos);
+        if board.data.get((pos + dir) as usize) == Some(&b'#') {
+            dir = board.turn(dir);
+        } else {
+            pos += dir;
+        }
+    }
+    board
+        .visited
+        .iter()
+        .enumerate()
+        .filter(|(_a, b)| **b)
+        .map(|(a, _b)| a as isize)
+        .collect_vec()
+}
+
+pub fn part2(input: &str) {
+    let visited = visited(input);
+    let input: Vec<Vec<_>> = input
+        .lines()
+        .map(|s| {
+            iter::empty()
+                .chain(vec![b'x'; s.bytes().len()])
+                .chain(s.bytes())
+                .chain(vec![b'x'; s.bytes().len()])
+                .collect_vec()
+        })
+        .collect_vec();
+    let mut board = Board::new(input);
     let mut day6_part2 = 0;
-    for i in 0..w * h {
-        let t = input_one[i];
-        input_one[i] = b'#';
-        if t != b'x' && have_loop(&input_one, ww, hh) {
+    for i in visited {
+        let t = board.data[i as usize];
+        board.data[i as usize] = b'#';
+        if t != b'x' && have_loop(&board) {
             day6_part2 += 1;
         }
-        input_one[i] = t;
+        board.data[i as usize] = t;
     }
     dbg!(day6_part2);
 }
 
-pub fn have_loop(input_one: &[u8], ww: isize, hh: isize) -> bool {
-    let mut obstructed = vec![0; (ww * hh) as usize];
-    let dirs = [-ww, 1, ww, -1];
-    let Some(cursor) = input_one.iter().position(|x| *x == b'^') else {
+fn have_loop(board: &Board) -> bool {
+    let mut obstructed = vec![0; (board.w * board.h) as usize];
+    let Some(pos) = board.data.iter().position(|x| *x == b'^') else {
         return false;
     };
-    let mut cursor = cursor as isize;
-    'a: for dir in dirs.iter().cycle() {
-        'b: loop {
-            if cursor < 0 || cursor >= ww * hh || input_one[(cursor) as usize] == b'x' {
-                break 'a;
-            } else if input_one.get((cursor + *dir) as usize) == Some(&b'#') {
-                if obstructed[cursor as usize] > 1 {
-                    return true;
-                }
-                obstructed[cursor as usize] += 1;
-                break 'b;
-            } else {
-                cursor += dir;
+    let mut pos = pos as isize;
+    let mut dir = board.turn(0);
+    while board.in_bound(pos) {
+        if board.data.get((pos + dir) as usize) == Some(&b'#') {
+            if obstructed[pos as usize] > 1 {
+                return true;
             }
+            obstructed[pos as usize] += 1;
+            dir = board.turn(dir);
+        } else {
+            pos += dir;
         }
     }
     false

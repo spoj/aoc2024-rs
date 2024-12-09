@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use itertools::Itertools;
 
 pub static SAMPLE: &str = r#"47|53
@@ -68,33 +70,33 @@ fn sat_all(report: &[isize], orders: &[(isize, isize)]) -> bool {
     orders.iter().all(|order| sat_one(report, order))
 }
 
-fn top_sort_2(report: &[isize], orders: &[(isize, isize)]) -> Option<Vec<isize>> {
-    fn top_sort2_int(report: &[isize], acc: &mut Vec<isize>, orders: &[(isize, isize)]) -> bool {
-        if !sat_all(acc, orders) {
-            return false;
-        }
+fn topo_sort(orders: &[(isize, isize)], nodes: &[isize]) -> Option<Vec<isize>> {
+    let mut nodes: HashSet<isize> = nodes.iter().copied().collect();
+    let mut edges: Vec<(isize, isize)> = orders
+        .iter()
+        .copied()
+        .filter(|(a, b)| nodes.contains(a) && nodes.contains(b))
+        .collect();
+    let mut ans: Vec<isize> = vec![];
+    let mut s: Vec<isize> = nodes
+        .iter()
+        .copied()
+        .filter(|x| edges.iter().all(|(_a, b)| x != b))
+        .collect();
 
-        if report.is_empty() {
-            return true;
-        }
-
-        let acclen = acc.len();
-        let next = report[0];
-        for i in 0..acclen + 1 {
-            acc.insert(i, next);
-            let nextresult = top_sort2_int(&report[1..], acc, orders);
-            if nextresult {
-                return true;
-            } else {
-                acc.remove(i);
-            }
-        }
-
-        false
+    while let Some(n) = s.pop() {
+        edges.retain(|(a, _b)| n != *a);
+        nodes.remove(&n);
+        ans.push(n);
+        s.extend(
+            nodes
+                .iter()
+                .copied()
+                .filter(|x| edges.iter().all(|(_a, b)| x != b)),
+        );
     }
-    let mut acc = vec![];
-    let res = top_sort2_int(report, &mut acc, orders);
-    if res { Some(acc) } else { None }
+
+    if edges.is_empty() { Some(ans) } else { None }
 }
 
 fn midnum(report: &[isize]) -> isize {
@@ -121,7 +123,7 @@ pub fn part2(input: &str) {
     let day5_part2: isize = reports
         .iter()
         .filter(|report| !sat_all(report, &orders))
-        .flat_map(|report| top_sort_2(report, &orders))
+        .flat_map(|report| topo_sort(&orders, report))
         .map(|report| midnum(&report))
         .sum();
     dbg!(day5_part2);

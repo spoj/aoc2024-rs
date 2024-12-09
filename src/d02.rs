@@ -50,8 +50,6 @@ fn strict_safe(report: &[isize]) -> bool {
 }
 
 fn relax_safe(report: &[isize]) -> bool {
-    // count_slow!('#');
-
     let mut copy = report[1..].to_owned();
     let mut i = 0;
     loop {
