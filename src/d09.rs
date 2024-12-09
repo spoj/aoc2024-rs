@@ -33,8 +33,8 @@ pub fn part1(input: &str) {
             }
         }
     }
-    let ans: usize = disk.iter().enumerate().map(|(a, b)| a * b).sum();
-    dbg!(ans);
+    let day9_part1: usize = disk.iter().enumerate().map(|(a, b)| a * b).sum();
+    dbg!(day9_part1);
 }
 
 pub fn part2(input: &str) {
@@ -63,9 +63,9 @@ pub fn part2(input: &str) {
             free[free_index].1 -= *length;
         }
     }
-    let x: usize = data
+    let day9_part2: usize = data
         .into_iter()
         .map(|(start, len, data)| (start + start + len - 1) * len / 2 * data)
         .sum();
-    dbg!(x);
+    dbg!(day9_part2);
 }
