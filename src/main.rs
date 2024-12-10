@@ -93,6 +93,14 @@ fn d10() {
     part2(INPUT);
     println!();
 }
+fn d11() {
+    use aoc2024_rs::d11::*;
+    part1(SAMPLE);
+    part1(INPUT);
+    part2(SAMPLE);
+    part2(INPUT);
+    println!();
+}
 
 fn main() {
     // d00();
@@ -105,5 +113,6 @@ fn main() {
     // d07();
     // d08();
     // d09();
-    d10();
+    // d10();
+    d11();
 }
