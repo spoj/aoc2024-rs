@@ -1,4 +1,8 @@
-use std::{collections::HashSet, iter};
+use std::{
+    cmp::Ordering::{Equal, Greater, Less},
+    collections::HashSet,
+    iter,
+};
 
 use itertools::Itertools;
 
@@ -42,7 +46,7 @@ impl Board {
     }
 
     fn in_bound(&self, pos: isize) -> bool {
-        pos >= 0 && pos < self.w * self.h && self.data[pos as usize] != b'x'
+        pos >= 0 && pos < self.w * self.h && self.data[pos as usize] != 255
     }
     fn dirs(&self) -> [isize; 4] {
         [-self.w, 1, self.w, -1]
@@ -60,17 +64,16 @@ impl Board {
                 .collect_vec()
         }
     }
-    fn starts(&self) -> Vec<isize> {
+    fn starts(&self) -> impl Iterator<Item = isize> {
         (0..self.data.len())
             .filter(|pos| self.data[*pos] == 0)
             .map(|x| x as isize)
-            .collect_vec()
     }
     fn tails(&self, pos: isize) -> HashSet<isize> {
         match self.data[pos as usize].cmp(&9) {
-            std::cmp::Ordering::Greater => HashSet::new(),
-            std::cmp::Ordering::Equal => HashSet::from([pos]),
-            std::cmp::Ordering::Less => self
+            Greater => HashSet::new(),
+            Equal => HashSet::from([pos]),
+            Less => self
                 .nexts(pos)
                 .into_iter()
                 .flat_map(|n| self.tails(n))
@@ -79,29 +82,21 @@ impl Board {
     }
     fn rating(&self, pos: isize) -> usize {
         match self.data[pos as usize].cmp(&9) {
-            std::cmp::Ordering::Greater => 0,
-            std::cmp::Ordering::Equal => 1,
-            std::cmp::Ordering::Less => self.nexts(pos).into_iter().map(|n| self.rating(n)).sum(),
+            Greater => 0,
+            Equal => 1,
+            Less => self.nexts(pos).into_iter().map(|n| self.rating(n)).sum(),
         }
     }
 }
 
 pub fn part1(input: &str) {
     let input = Board::parse(input);
-    let day10_part1: usize = input
-        .starts()
-        .into_iter()
-        .map(|start| input.tails(start).len())
-        .sum();
+    let day10_part1: usize = input.starts().map(|start| input.tails(start).len()).sum();
     dbg!(day10_part1);
 }
 
 pub fn part2(input: &str) {
     let input = Board::parse(input);
-    let day10_part2: usize = input
-        .starts()
-        .into_iter()
-        .map(|start| input.rating(start))
-        .sum();
+    let day10_part2: usize = input.starts().map(|start| input.rating(start)).sum();
     dbg!(day10_part2);
 }
