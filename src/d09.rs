@@ -52,15 +52,14 @@ pub fn part2(input: &str) {
         }
         pos += *len as usize;
     });
-    for (start, length, _data) in data.iter_mut().rev() {
-        // println!("start {} len {} data {}", start, length, data);
-        if let Some(free_index) = free
-            .iter()
-            .position(|(freestart, freelen)| freelen >= length && freestart < start)
+    for (data_start, data_len, _data_id) in data.iter_mut().rev() {
+        if let Some((free_start, free_len)) = free
+            .iter_mut()
+            .find(|(fs, fl)| fl >= data_len && fs < data_start)
         {
-            *start = free[free_index].0;
-            free[free_index].0 += *length;
-            free[free_index].1 -= *length;
+            *data_start = *free_start;
+            *free_start += *data_len;
+            *free_len -= *data_len;
         }
     }
     let day9_part2: usize = data
