@@ -40,17 +40,7 @@ impl Board {
             .collect_vec();
         Board::new(input)
     }
-    fn turn(&self, dir: isize) -> isize {
-        if dir == -self.w {
-            1
-        } else if dir == 1 {
-            self.w
-        } else if dir == self.w {
-            -1
-        } else {
-            -self.w
-        }
-    }
+
     fn in_bound(&self, pos: isize) -> bool {
         pos >= 0 && pos < self.w * self.h && self.data[pos as usize] != b'x'
     }
