@@ -125,6 +125,14 @@ fn d14() {
     part2(101, 103, 77, INPUT);
     println!();
 }
+fn d15() {
+    use aoc2024_rs::d15::*;
+    part1(SAMPLE);
+    part1(INPUT);
+    // part2(SAMPLE);
+    // part2(INPUT);
+    println!();
+}
 
 fn main() {
     // d00();
@@ -141,5 +149,6 @@ fn main() {
     // d11();
     // d12();
     // d13();
-    d14();
+    // d14();
+    d15();
 }
