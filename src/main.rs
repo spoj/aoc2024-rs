@@ -101,6 +101,30 @@ fn d11() {
     part2(INPUT);
     println!();
 }
+fn d12() {
+    use aoc2024_rs::d12::*;
+    part1(SAMPLE);
+    part1(INPUT);
+    // part2(SAMPLE);
+    // part2(INPUT);
+    println!();
+}
+fn d13() {
+    use aoc2024_rs::d13::*;
+    part1(SAMPLE);
+    part1(INPUT);
+    part2(SAMPLE);
+    part2(INPUT);
+    println!();
+}
+fn d14() {
+    use aoc2024_rs::d14::*;
+    part1(11, 7, 100, SAMPLE);
+    part1(101, 103, 100, INPUT);
+    // part2(11, 7, 100, SAMPLE);
+    part2(101, 103, 77, INPUT);
+    println!();
+}
 
 fn main() {
     // d00();
@@ -114,5 +138,8 @@ fn main() {
     // d08();
     // d09();
     // d10();
-    d11();
+    // d11();
+    // d12();
+    // d13();
+    d14();
 }
