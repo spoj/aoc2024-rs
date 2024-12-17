@@ -1,3 +1,5 @@
+use std::io::stdin;
+
 use itertools::Itertools;
 use regex::Regex;
 
@@ -69,6 +71,12 @@ fn cmod(a: isize, b: isize) -> isize {
     ((a % b) + b) % b
 }
 
-pub fn part2(w: isize, h: isize, secs: isize, input: &str) {
-    sim_sec(w, h, secs, input);
+pub fn part2(w: isize, h: isize, input: &str) {
+    let s = stdin();
+    let mut secs = 8257;
+    for _ in s.lines() {
+        secs += 1;
+        sim_sec(w, h, secs, input);
+        dbg!(&secs);
+    }
 }

@@ -77,6 +77,9 @@ impl Board {
             b'>',
         )
     }
+    fn find_end(&self) -> isize {
+        self.data.iter().position(|x| *x == END).unwrap() as isize
+    }
     fn nexts(&self, pose: (isize, u8)) -> impl Iterator<Item = (isize, (isize, u8))> {
         [UP, DOWN, LEFT, RIGHT]
             .into_iter()
@@ -96,6 +99,9 @@ impl Board {
     }
     fn is_end(&self, loc: isize) -> bool {
         self.data[loc as usize] == END
+    }
+    fn is_start(&self, loc: isize) -> bool {
+        self.data[loc as usize] == START
     }
 }
 
@@ -119,4 +125,82 @@ pub fn part1(input: &str) {
         .min()
         .unwrap();
     dbg!(day16_part1);
+}
+
+pub fn part2(input: &str) {
+    println!("start");
+    let board = Board::parse(input);
+    let mut h: BinaryHeap<(isize, (isize, u8))> = BinaryHeap::new();
+    let mut from_start: HashMap<(isize, u8), isize> = HashMap::new();
+    h.push((0, board.find_start()));
+    while let Some((cost, pose)) = h.pop() {
+        if let Vacant(e) = from_start.entry(pose) {
+            e.insert(cost);
+            board.nexts(pose).for_each(|(sub_cost, sub_pose)| {
+                h.push((sub_cost + cost, sub_pose));
+            });
+        }
+    }
+
+    let mut from_end: HashMap<(isize, u8), isize> = HashMap::new();
+    h.push((0, (board.find_end(), DOWN)));
+    h.push((0, (board.find_end(), LEFT)));
+    while let Some((cost, pose)) = h.pop() {
+        if let Vacant(e) = from_end.entry(pose) {
+            e.insert(cost);
+            board.nexts(pose).for_each(|(sub_cost, sub_pose)| {
+                h.push((sub_cost + cost, sub_pose));
+            });
+        }
+    }
+
+    let target_len = from_start
+        .iter()
+        .filter(|x| board.is_end(x.0.0))
+        .map(|x| -x.1)
+        .min()
+        .unwrap();
+    dbg!(target_len);
+
+
+    let mut output = vec![-999999; board.data.len()];
+    for ((loc, dir), dist) in from_start {
+        let o1 = from_end
+            .get(&(loc, opposite(dir)))
+            .copied()
+            .unwrap_or(-999999);
+        let o2 = from_end
+            .get(&(loc, sides(dir)[0]))
+            .copied()
+            .unwrap_or(-999999);
+        let o3 = from_end
+            .get(&(loc, sides(dir)[1]))
+            .copied()
+            .unwrap_or(-999999);
+        output[loc as usize] = (dist + o1)
+            .max(dist + o2 - 1000)
+            .max(dist + o3 - 1000)
+            .max(output[loc as usize]);
+    }
+    let part2 = output.into_iter().filter(|x|*x==-target_len).count();
+    dbg!(part2);
+}
+
+fn opposite(dir: u8) -> u8 {
+    match dir {
+        x if x == UP => DOWN,
+        x if x == DOWN => UP,
+        x if x == LEFT => RIGHT,
+        x if x == RIGHT => LEFT,
+        _ => unreachable!(),
+    }
+}
+fn sides(dir: u8) -> [u8; 2] {
+    match dir {
+        x if x == UP => [LEFT, RIGHT],
+        x if x == DOWN => [LEFT, RIGHT],
+        x if x == LEFT => [UP, DOWN],
+        x if x == RIGHT => [UP, DOWN],
+        _ => unreachable!(),
+    }
 }
