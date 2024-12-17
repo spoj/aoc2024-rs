@@ -100,9 +100,6 @@ impl Board {
     fn is_end(&self, loc: isize) -> bool {
         self.data[loc as usize] == END
     }
-    fn is_start(&self, loc: isize) -> bool {
-        self.data[loc as usize] == START
-    }
 }
 
 pub fn part1(input: &str) {
@@ -162,7 +159,6 @@ pub fn part2(input: &str) {
         .unwrap();
     dbg!(target_len);
 
-
     let mut output = vec![-999999; board.data.len()];
     for ((loc, dir), dist) in from_start {
         let o1 = from_end
@@ -182,7 +178,7 @@ pub fn part2(input: &str) {
             .max(dist + o3 - 1000)
             .max(output[loc as usize]);
     }
-    let part2 = output.into_iter().filter(|x|*x==-target_len).count();
+    let part2 = output.into_iter().filter(|x| *x == -target_len).count();
     dbg!(part2);
 }
 
