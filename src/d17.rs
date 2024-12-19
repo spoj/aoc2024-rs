@@ -1,4 +1,3 @@
-
 use itertools::Itertools;
 
 pub static SAMPLE: &str = r#"Register A: 729
@@ -7,9 +6,31 @@ Register C: 0
 
 Program: 0,1,5,4,3,0
 "#;
+
+pub static SAMPLE2: &str = r#"Register A: 2024
+Register B: 0
+Register C: 0
+
+Program: 0,3,5,4,3,0
+"#;
 pub static INPUT: &str = include_str!("../data/d17.txt");
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
+struct Program {
+    program: Vec<usize>,
+}
+
+impl Program {
+    fn new(program: Vec<usize>) -> Self {
+        Self { program }
+    }
+    fn output_with_a(&self, a: usize) -> Vec<usize> {
+        let program = self.program.clone();
+        Machine::new(a, 0, 0, program).complete()
+    }
+}
+
+#[derive(Debug, Clone)]
 struct Machine {
     a: usize,
     b: usize,
@@ -142,6 +163,31 @@ pub fn part1(input: &str) {
     let day17_part1 = list.into_iter().map(print_3bit).join(",");
     dbg!(day17_part1);
 }
+
 pub fn part2(input: &str) {
-    println!("{}", input);
+    let (_, prog) = input.split_once("\n\n").unwrap();
+    let prog = prog
+        .split_once(": ")
+        .unwrap()
+        .1
+        .split(',')
+        .map(parse_3bit)
+        .collect_vec();
+    let prog = Program::new(prog);
+    let need = prog.program.clone();
+    let mut seed = 0;
+    while prog.output_with_a(seed).len() < need.len() {
+        for i in 0..64 {
+            let testing = (seed << 3) + i;
+            let output = prog.output_with_a(testing);
+            if need.ends_with(&output) {
+                seed = testing;
+                break;
+            }
+        }
+    }
+
+    if prog.output_with_a(seed) == need {
+        dbg!(seed);
+    }
 }
