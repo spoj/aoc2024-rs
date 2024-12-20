@@ -12,6 +12,7 @@ pub static SAMPLE: &str = r#"190: 10 19
 "#;
 pub static INPUT: &str = include_str!("../data/d07.txt");
 
+
 pub fn part1(input: &str) {
     let input = input
         .lines()

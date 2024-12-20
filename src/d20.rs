@@ -27,12 +27,13 @@ pub static INPUT: &str = include_str!("../data/d20.txt");
 static START: u8 = b'S';
 static END: u8 = b'E';
 static WALL: u8 = b'#';
-static EMPTY: u8 = b'.';
 
 #[derive(Clone, Debug)]
 struct Board {
     data: Vec<u8>,
+    #[allow(unused)]
     w: isize,
+    #[allow(unused)]
     h: isize,
 }
 
@@ -46,18 +47,18 @@ impl Board {
     }
 
     fn parse(input: &str) -> Self {
-        let input = input
+        let mut input = input
             .lines()
             .map(|s| {
                 iter::empty()
-                    // .chain(vec![0; s.bytes().len()])
+                    .chain(vec![WALL; s.bytes().len()])
                     .chain(s.bytes())
-                    // .chain(vec![0; s.bytes().len()])
+                    .chain(vec![WALL; s.bytes().len()])
                     .collect_vec()
             })
             .collect_vec();
-        // input.insert(0, vec![0; input[0].len()]);
-        // input.push(vec![0; input[0].len()]);
+        input.insert(0, vec![WALL; input[0].len()]);
+        input.push(vec![WALL; input[0].len()]);
         Board::new(input)
     }
     fn find_start(&self) -> isize {
@@ -77,39 +78,21 @@ impl Board {
             }
         })
     }
+    #[allow(unused)]
     fn is_end(&self, loc: isize) -> bool {
         self.data[loc as usize] == END
     }
+    #[allow(unused)]
     fn is_start(&self, loc: isize) -> bool {
         self.data[loc as usize] == START
     }
-    fn corrupt_xy(&mut self, x: isize, y: isize) {
-        let x = x + 1;
-        let y = y + 1;
-        let loc = y * self.w + x;
-        self.data[loc as usize] = WALL;
-    }
-
-    fn passes(&self) -> bool {
-        let end = self.find_end();
-        let mut done: HashMap<isize, usize> = HashMap::new();
-        let mut h: BinaryHeap<(Reverse<usize>, isize)> = BinaryHeap::new();
-        h.push((Reverse(0_usize), self.find_start()));
-        while let Some((Reverse(dist), loc)) = h.pop() {
-            if let Entry::Vacant(e) = done.entry(loc) {
-                e.insert(dist);
-                self.nexts(loc).for_each(|next| {
-                    h.push((Reverse(1 + dist), next));
-                });
-            }
-        }
-        done.contains_key(&end)
-    }
     fn start_to_end(&self) -> usize {
-        let end = self.find_end();
+        self.dist_from_loc(self.find_start())[&self.find_end()]
+    }
+    fn dist_from_loc(&self, loc: isize) -> HashMap<isize, usize> {
         let mut done: HashMap<isize, usize> = HashMap::new();
         let mut h: BinaryHeap<(Reverse<usize>, isize)> = BinaryHeap::new();
-        h.push((Reverse(0_usize), self.find_start()));
+        h.push((Reverse(0_usize), loc));
         while let Some((Reverse(dist), loc)) = h.pop() {
             if let Entry::Vacant(e) = done.entry(loc) {
                 e.insert(dist);
@@ -118,33 +101,74 @@ impl Board {
                 });
             }
         }
-        done[&end]
+        done
     }
-    fn is_bounds(&self, pos: isize) -> bool {
+    fn cheat_to(&self, pos: isize, radius: isize) -> HashMap<isize, usize> {
         let x = pos % self.w;
-        let y = pos / self.h;
-        x == 0 || x == self.w - 1 || y == 0 || y == self.h - 1
-    }
-    fn cheat_board(&self, pos: isize) -> Self {
-        let mut c = self.clone();
-        if !self.is_bounds(pos) && !self.is_start(pos) && !self.is_end(pos) {
-            c.data[pos as usize] = b'.';
+        let y = pos / self.w;
+        let mut out = HashMap::new();
+        for i in -radius..=radius {
+            for j in -(radius - i.abs())..=(radius - i.abs()) {
+                let newx = x + i;
+                let newy = y + j;
+                // println!("from {},{}, i is {} j is {} and to {},{}",x,y,i,j,newx,newy);
+                let dist = (i.abs() + j.abs()) as usize;
+                let new_pos = newy * self.w + newx;
+                if dist > 1
+                    && new_pos >= 0
+                    && new_pos < self.data.len() as isize
+                    && self.data[new_pos as usize] != WALL
+                {
+                    out.insert(new_pos, dist);
+                }
+            }
         }
-        c
+        out
+    }
+    #[allow(unused)]
+    fn pretty(&self) {
+        for (i, v) in self.data.iter().enumerate() {
+            if i % self.w as usize == 0 {
+                println!();
+            }
+            print!("{}", *v as char);
+        }
+        println!();
     }
 }
 
-pub fn part1(input: &str) {
-    let b = Board::parse(input);
-    let std_time = b.start_to_end() as isize;
-    let x = (0..b.data.len())
-        .map(|i| {
-            let bb = b.cheat_board(i as isize);
-            std_time - bb.start_to_end() as isize
-        })
-        .collect_vec(); kkk.,,yytt
-    dbg!(x.iter().counts().iter().sorted().collect_vec());
+pub fn part1(thres: usize, input: &str) {
+    let board = Board::parse(input);
+    let std_time = board.start_to_end();
+    let from_start = board.dist_from_loc(board.find_start());
+    let from_end = board.dist_from_loc(board.find_end());
+    let mut day20_part1 = 0;
+    for (a, leg1) in from_start {
+        for (b, leg2) in board.cheat_to(a, 2) {
+            if let Some(leg3) = from_end.get(&b) {
+                if leg1 + leg2 + leg3 <= std_time - thres {
+                    day20_part1 += 1;
+                }
+            }
+        }
+    }
+    dbg!(day20_part1);
 }
-pub fn part2(input: &str) {
-    println!("{}", input);
+
+pub fn part2(thres: usize, input: &str) {
+    let board = Board::parse(input);
+    let std_time = board.start_to_end();
+    let from_start = board.dist_from_loc(board.find_start());
+    let from_end = board.dist_from_loc(board.find_end());
+    let mut day20_part2 = 0;
+    for (a, leg1) in from_start {
+        for (b, leg2) in board.cheat_to(a, 20) {
+            if let Some(leg3) = from_end.get(&b) {
+                if leg1 + leg2 + leg3 <= std_time - thres {
+                    day20_part2 += 1;
+                }
+            }
+        }
+    }
+    dbg!(day20_part2);
 }
