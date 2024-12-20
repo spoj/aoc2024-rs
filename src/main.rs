@@ -157,10 +157,19 @@ fn d18() {
     part2(71, 71, INPUT);
     println!();
 }
+
+fn d19() {
+    use aoc2024_rs::d19::*;
+    part1(SAMPLE);
+    part1(INPUT);
+    part2(SAMPLE);
+    part2(INPUT);
+    println!();
+}
 fn d20() {
     use aoc2024_rs::d20::*;
-    part1(50,SAMPLE);
-    part1(100,INPUT);
+    part1(50, SAMPLE);
+    part1(100, INPUT);
     part2(50, SAMPLE);
     part2(100, INPUT);
     println!();
@@ -186,5 +195,6 @@ fn main() {
     // d16();
     // d17();
     // d18();
-    d20();
+    // d20();
+    d19();
 }
