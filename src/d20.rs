@@ -103,10 +103,10 @@ impl Board {
         }
         done
     }
-    fn cheat_to(&self, pos: isize, radius: isize) -> HashMap<isize, usize> {
+    fn cheat_to(&self, pos: isize, radius: isize) -> Vec<(isize, usize)> {
         let x = pos % self.w;
         let y = pos / self.w;
-        let mut out = HashMap::new();
+        let mut out = Vec::new();
         for i in -radius..=radius {
             for j in -(radius - i.abs())..=(radius - i.abs()) {
                 let newx = x + i;
@@ -119,7 +119,7 @@ impl Board {
                     && new_pos < self.data.len() as isize
                     && self.data[new_pos as usize] != WALL
                 {
-                    out.insert(new_pos, dist);
+                    out.push((new_pos, dist));
                 }
             }
         }
