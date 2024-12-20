@@ -33,8 +33,8 @@ static RIGHT: u8 = b'>';
 static BOT: u8 = b'@';
 static WALL: u8 = b'#';
 static FOOD: u8 = b'O';
-static BOX1: u8 = b'[';
-static BOX2: u8 = b']';
+static _BOX1: u8 = b'[';
+static _BOX2: u8 = b']';
 static EMPTY: u8 = b'.';
 
 #[derive(Clone, Debug)]
@@ -45,7 +45,7 @@ struct Board {
 }
 
 impl Board {
-    fn from1(input: Board) -> Self {
+    fn _from1(input: Board) -> Self {
         let data = input
             .data
             .into_iter()
@@ -118,39 +118,7 @@ impl Board {
             }
         }
     }
-    fn front(&self, loc: isize, mv: u8) -> Vec<isize> {
-        match self.data[loc as usize] {
-            t if t == BOT => vec![loc + self.dir(mv)],
-            t if t == WALL => vec![],
-            t if t == EMPTY => vec![],
-            t if t == BOX1 => match mv {
-                m if m == LEFT => vec![loc + self.dir(mv)],
-                m if m == RIGHT => vec![loc + self.dir(mv) + self.dir(mv)],
-                m if m == UP => vec![loc + self.dir(mv), loc + self.dir(RIGHT) + self.dir(mv)],
-                m if m == DOWN => vec![loc + self.dir(mv), loc + self.dir(RIGHT) + self.dir(mv)],
-                _ => unreachable!(),
-            },
-            t if t == BOX2 => match mv {
-                m if m == LEFT => vec![loc + self.dir(mv) + self.dir(mv)],
-                m if m == RIGHT => vec![loc + self.dir(mv)],
-                m if m == UP => vec![loc + self.dir(mv), loc + self.dir(LEFT) + self.dir(mv)],
-                m if m == DOWN => vec![loc + self.dir(mv), loc + self.dir(LEFT) + self.dir(mv)],
-                _ => unreachable!(),
-            },
-            t => vec![],
-        }
-    }
-
-    fn body(&self, loc: isize) -> Vec<isize> {
-        match self.data[loc as usize] {
-            t if t == BOT => vec![loc],
-            t if t == WALL => vec![loc],
-            t if t == EMPTY => vec![loc],
-            t if t == BOX1 => vec![loc, loc + self.dir(RIGHT)],
-            t if t == BOX2 => vec![loc, loc + self.dir(LEFT)],
-            _ => vec![],
-        }
-    }
+    
     fn find_bot(&self) -> isize {
         self.data.iter().position(|x| *x == BOT).unwrap() as isize
     }
