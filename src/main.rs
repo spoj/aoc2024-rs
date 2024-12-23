@@ -1,4 +1,5 @@
-#![allow(dead_code, unused_imports)]
+#![allow(dead_code)]
+#![allow(unused_imports)]
 
 fn d00() {
     use aoc2024_rs::d00::*;
@@ -174,6 +175,17 @@ fn d20() {
     part2(100, INPUT);
     println!();
 }
+fn d21() {
+    use aoc2024_rs::d21::*;
+    part1(SAMPLE);
+    println!();
+}
+fn d22() {
+    use aoc2024_rs::d22::*;
+    part1(SAMPLE);
+    part1(INPUT);
+    println!();
+}
 
 fn main() {
     // d00();
@@ -196,5 +208,7 @@ fn main() {
     // d17();
     // d18();
     // d19();
-    d20();
+    // d20();
+    // d21();
+    d22();
 }

@@ -31,9 +31,7 @@ static WALL: u8 = b'#';
 #[derive(Clone, Debug)]
 struct Board {
     data: Vec<u8>,
-    #[allow(unused)]
     w: isize,
-    #[allow(unused)]
     h: isize,
 }
 
@@ -78,11 +76,9 @@ impl Board {
             }
         })
     }
-    #[allow(unused)]
     fn is_end(&self, loc: isize) -> bool {
         self.data[loc as usize] == END
     }
-    #[allow(unused)]
     fn is_start(&self, loc: isize) -> bool {
         self.data[loc as usize] == START
     }
@@ -125,7 +121,6 @@ impl Board {
         }
         out
     }
-    #[allow(unused)]
     fn pretty(&self) {
         for (i, v) in self.data.iter().enumerate() {
             if i % self.w as usize == 0 {

@@ -1,3 +1,6 @@
+#![allow(dead_code)]
+#![allow(unused_macros)]
+
 use std::{
     io::{Stdout, Write, stdout},
     thread::sleep,
@@ -33,7 +36,6 @@ impl DelayingCounter {
     }
 }
 
-#[allow(unused_macros)]
 macro_rules! count_slow {
     ($x:expr) => {
         use crate::DelayingCounter;
@@ -48,7 +50,6 @@ macro_rules! count_slow {
     };
 }
 
-#[allow(unused_macros)]
 macro_rules! count_fast {
     ($x:expr) => {
         use crate::DelayingCounter;
@@ -84,3 +85,5 @@ pub mod d17;
 pub mod d18;
 pub mod d19;
 pub mod d20;
+pub mod d21;
+pub mod d22;
