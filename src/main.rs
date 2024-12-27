@@ -193,6 +193,13 @@ fn d23() {
     println!();
 }
 
+fn d25() {
+    use aoc2024_rs::d25::*;
+    part1(SAMPLE);
+    part1(INPUT);
+    println!();
+}
+
 fn main() {
     // d00();
     // d01();
@@ -217,5 +224,6 @@ fn main() {
     // d20();
     // d21();
     // d22();
-    d23();
+    // d23();
+    d25();
 }
