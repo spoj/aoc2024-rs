@@ -1,10 +1,8 @@
 use std::{
     cell::RefCell,
     collections::{HashMap, HashSet},
-    hash::Hash,
 };
 
-use itertools::Itertools;
 use regex::Regex;
 
 pub static SAMPLE: &str = r#"x00: 1
