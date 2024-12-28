@@ -131,10 +131,10 @@ pub fn part1(input: &str) {
         })
         .collect();
     let vs = ValueStore::new(init_values, rels);
-    let ans: isize = vs
+    let day24_part1: isize = vs
         .zvalues()
         .into_iter()
         .map(|(order, num)| num * 2isize.pow(order as u32))
         .sum();
-    dbg!(ans);
+    dbg!(day24_part1);
 }
