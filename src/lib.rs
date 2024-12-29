@@ -65,6 +65,7 @@ macro_rules! count_fast {
 }
 
 pub mod d00;
+pub mod dlearn;
 pub mod d01;
 pub mod d02;
 pub mod d03;

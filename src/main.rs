@@ -10,6 +10,12 @@ fn d00() {
     println!();
 }
 
+fn dlearn() {
+    use aoc2024_rs::dlearn::*;
+    trying();
+    println!();
+}
+
 fn d01() {
     use aoc2024_rs::d01::*;
     part1(SAMPLE);
@@ -206,6 +212,7 @@ fn d24() {
     println!();
 }
 
+
 fn main() {
     // d00();
     // d01();
@@ -232,5 +239,7 @@ fn main() {
     // d22();
     // d23();
     // d25();
-    d24();
+    // d24();
+    // d21()
+    dlearn()
 }
