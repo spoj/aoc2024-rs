@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeSet, HashMap, HashSet};
 
 use itertools::Itertools;
 
@@ -66,6 +66,51 @@ pub fn part1(input: &str) {
         .count();
     dbg!(ans);
 }
+
 pub fn part2(input: &str) {
-    println!("{}", input);
+    let adj = input
+        .lines()
+        .map(|l| l.split_once('-').unwrap())
+        .collect_vec();
+    let mut conn: HashMap<&str, BTreeSet<&str>> = HashMap::new();
+    input.lines().for_each(|l| {
+        let (a, b) = l.split_once('-').unwrap();
+        conn.entry(a).or_default().insert(b);
+        conn.entry(b).or_default().insert(a);
+    });
+    let conn = conn;
+    let nodes = conn.keys().collect_vec();
+
+    let mut islands: BTreeSet<BTreeSet<&str>> = Default::default();
+    let mut islands_next: BTreeSet<BTreeSet<&str>> = Default::default();
+
+    // initialize with adjacent list
+    adj.iter().for_each(|(a, b)| {
+        islands_next.insert(BTreeSet::from([*a, *b]));
+    });
+
+    while !islands_next.is_empty() {
+        islands = islands_next;
+        islands_next = islands
+            .iter()
+            .flat_map(|island| {
+                let eligible = nodes
+                    .iter()
+                    .filter(|candidate| {
+                        island
+                            .iter()
+                            .all(|member| conn[**candidate].contains(member))
+                    })
+                    .collect_vec();
+                eligible.into_iter().map(move |new_node| {
+                    let mut new_island = island.clone();
+                    new_island.insert(new_node);
+                    new_island
+                })
+            })
+            .collect();
+    }
+    let ans = islands.first().unwrap();
+    let day23_part2 = format!("{}", ans.iter().format(","));
+    dbg!(day23_part2);
 }

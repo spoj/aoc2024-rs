@@ -188,14 +188,18 @@ fn d21() {
 }
 fn d22() {
     use aoc2024_rs::d22::*;
-    part1(SAMPLE);
-    part1(INPUT);
+    // part1(SAMPLE);
+    // part1(INPUT);
+    part2(SAMPLE);
+    part2(INPUT);
     println!();
 }
 fn d23() {
     use aoc2024_rs::d23::*;
-    part1(SAMPLE);
-    part1(INPUT);
+    // part1(SAMPLE);
+    // part1(INPUT);
+    part2(SAMPLE);
+    part2(INPUT);
     println!();
 }
 
@@ -211,7 +215,6 @@ fn d24() {
     part1(INPUT);
     println!();
 }
-
 
 fn main() {
     // d00();
@@ -236,10 +239,10 @@ fn main() {
     // d19();
     // d20();
     // d21();
-    // d22();
+    d22();
     // d23();
     // d25();
     // d24();
-    // d21()
-    dlearn()
+    // d21();
+    // dlearn();
 }
