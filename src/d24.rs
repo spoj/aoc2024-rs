@@ -1,9 +1,10 @@
-use std::{
-    cell::RefCell,
-    collections::{HashMap, HashSet},
-};
+use std::{collections::HashMap, iter};
 
+use itertools::Itertools;
+use rand::{Rng, thread_rng};
 use regex::Regex;
+
+use crate::answer;
 
 pub static SAMPLE: &str = r#"x00: 1
 x01: 0
@@ -56,85 +57,185 @@ tnw OR pbm -> gnj
 pub static INPUT: &str = include_str!("../data/d24.txt");
 
 #[derive(Debug, PartialEq, Eq)]
-struct ValueStore<'a> {
-    kv: RefCell<HashMap<&'a str, isize>>,
-    rels: HashMap<&'a str, (&'a str, &'a str, &'a str)>,
+struct ValueStore {
+    kv: HashMap<String, usize>,
+    rels: HashMap<String, (String, String, String)>,
 }
 
-impl<'a> ValueStore<'a> {
-    fn new(
-        kv: HashMap<&'a str, isize>,
-        rels: HashMap<&'a str, (&'a str, &'a str, &'a str)>,
-    ) -> Self {
-        Self {
-            kv: RefCell::new(kv),
-            rels,
-        }
+impl ValueStore {
+    fn new(kv: HashMap<String, usize>, rels: HashMap<String, (String, String, String)>) -> Self {
+        Self { kv, rels }
     }
-    fn resolve(&self, sym: &'a str) -> Option<isize> {
-        if let Some(v) = self.kv.borrow().get(sym) {
-            Some(*v)
-        } else if let Some((op, a, b)) = self.rels.get(sym) {
-            let a_val = self.resolve(a)?;
-            let b_val = self.resolve(b)?;
-            let new_val = match *op {
-                "AND" => a_val & b_val,
-                "OR" => a_val | b_val,
-                "XOR" => a_val ^ b_val,
-                _ => unreachable!(),
-            };
-            self.kv.borrow_mut().insert(sym, new_val);
-            Some(new_val)
-        } else {
-            None
+
+    fn ff(&mut self) {
+        let mut queue: Vec<_> = self.rels.keys().collect();
+        let mut progress = true;
+        while progress {
+            progress = false;
+            queue.retain(|sym| {
+                let (op, a, b) = self.rels.get(&sym[..]).unwrap();
+                if self.kv.contains_key(a) && self.kv.contains_key(b) {
+                    let a_val = self.kv[a];
+                    let b_val = self.kv[b];
+                    progress = true;
+                    let new_val = match &op[..] {
+                        "AND" => a_val & b_val,
+                        "OR" => a_val | b_val,
+                        "XOR" => a_val ^ b_val,
+                        _ => unreachable!(),
+                    };
+                    self.kv.insert(sym.to_string(), new_val);
+                    false
+                } else {
+                    true
+                }
+            });
         }
-    }
-    fn all_nodes(&self) -> Vec<&str> {
-        let mut out = HashSet::new();
-        out.extend(self.kv.borrow().keys());
-        out.extend(self.rels.keys());
-        out.into_iter().collect()
     }
     fn znodes(&self) -> Vec<&str> {
-        self.all_nodes()
-            .into_iter()
+        self.rels
+            .keys()
             .filter(|x| x.starts_with('z'))
+            .map(|x| &x[..])
             .collect()
     }
-    fn zvalues(&'a self) -> Vec<(isize, isize)> {
-        self.znodes()
-            .into_iter()
-            .filter_map(|node| {
-                let order: isize = node[1..3].parse().unwrap();
-                let value = self.resolve(node)?;
-                Some((order, value))
-            })
-            .collect()
+
+    fn zvalue(&mut self) -> usize {
+        self.ff();
+        let mut sum = 0;
+        for node in self.znodes() {
+            let order: usize = node[1..3].parse().unwrap();
+            let value = self.kv.get(node).unwrap_or(&0);
+            sum += value * 2usize.pow(order as u32);
+        }
+        sum
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct AddingMachine {
+    rels: HashMap<String, (String, String, String)>,
+    nodes: Vec<String>,
+}
+
+impl AddingMachine {
+    fn new(rels: HashMap<String, (String, String, String)>) -> Self {
+        let nodes = rels.keys().cloned().sorted().collect_vec();
+        Self { rels, nodes }
+    }
+    fn to_bits(mut num: usize) -> Vec<usize> {
+        iter::from_fn(|| {
+            let bit = num % 2;
+            num >>= 1;
+            Some(bit)
+        })
+        .take(45)
+        .collect()
+    }
+
+    fn add(&self, x: usize, y: usize) -> usize {
+        let mut kv = HashMap::new();
+        kv.extend(
+            Self::to_bits(x)
+                .into_iter()
+                .enumerate()
+                .map(|(pos, v)| (format!("x{:02}", pos), v)),
+        );
+        kv.extend(
+            Self::to_bits(y)
+                .into_iter()
+                .enumerate()
+                .map(|(pos, v)| (format!("y{:02}", pos), v)),
+        );
+        let mut vs = ValueStore::new(kv, self.rels.clone());
+        vs.ff();
+        vs.zvalue()
+    }
+    fn swap(&mut self, left: &str, right: &str) {
+        if left == right {
+            unreachable!();
+        }
+        let left_value = self.rels.remove(left).unwrap();
+        let right_value = self.rels.remove(right).unwrap();
+        self.rels.insert(left.to_string(), right_value);
+        self.rels.insert(right.to_string(), left_value);
+    }
+    fn ver(&self, bits: usize) -> bool {
+        let mut rng = thread_rng();
+        for _ in 0..128 {
+            let x = rng.gen_range(0..1 << bits);
+            let y = rng.gen_range(0..1 << bits);
+            if self.add(x, y) != x + y {
+                return false;
+            }
+        }
+        true
+        // false
+    }
+    fn solve(&mut self, bits: usize, mut swaps: Vec<(String, String)>) -> bool {
+        let verified = self.ver(bits);
+        if bits == 45 {
+            dbg!(swaps);
+            return true;
+        } else if swaps.len() >= 4 && !verified {
+            return false;
+        } else if verified && self.solve(bits + 1, swaps.clone()) {
+            return true;
+        }
+        let nodes = self.nodes.clone();
+        for i in nodes.iter() {
+            // use std::{io::{Write, stdout}};
+            // print!("{}", &i[0..1]);
+            // stdout().flush().unwrap();
+            for j in nodes.iter().filter(|j| *j > i) {
+                self.swap(i, j);
+                swaps.push((i.to_string(), j.to_string()));
+                if swaps.len() <= 4 && self.ver(bits) {
+                    dbg!((bits, &swaps));
+                    if self.solve(bits + 1, swaps.clone()) {
+                        return true;
+                    }
+                }
+                self.swap(i, j);
+                swaps.pop();
+            }
+        }
+        false
     }
 }
 
 pub fn part1(input: &str) {
     let (a, b) = input.split_once("\n\n").unwrap();
-    let init_values: HashMap<&str, isize> = a
+    let init_values: HashMap<String, usize> = a
         .lines()
         .map(|l| {
             let (nam, val) = l.split_once(": ").unwrap();
-            (nam, val.parse().unwrap())
+            (nam.to_string(), val.parse().unwrap())
         })
         .collect();
     let re = Regex::new(r"([0-9a-z]+) ([A-Z]+) ([0-9a-z]+) -> ([0-9a-z]+)").unwrap();
-    let rels: HashMap<&str, (&str, &str, &str)> = b
+    let rels: HashMap<String, (String, String, String)> = b
         .lines()
         .map(|l| {
             let (_, [a, b, c, d]) = re.captures(l).unwrap().extract();
-            (d, (b, a, c))
+            (d.to_string(), (b.to_string(), a.to_string(), c.to_string()))
         })
         .collect();
-    let vs = ValueStore::new(init_values, rels);
-    let day24_part1: isize = vs
-        .zvalues()
-        .into_iter()
-        .map(|(order, num)| num * 2isize.pow(order as u32))
-        .sum();
-    dbg!(day24_part1);
+    let mut vs = ValueStore::new(init_values, rels);
+    let day24_part1: usize = vs.zvalue();
+    answer(24, 1, day24_part1);
+}
+pub fn part2(input: &str) {
+    let (_, b) = input.split_once("\n\n").unwrap();
+    let re = Regex::new(r"([0-9a-z]+) ([A-Z]+) ([0-9a-z]+) -> ([0-9a-z]+)").unwrap();
+    let rels: HashMap<String, (String, String, String)> = b
+        .lines()
+        .map(|l| {
+            let (_, [a, b, c, d]) = re.captures(l).unwrap().extract();
+            (d.to_string(), (b.to_string(), a.to_string(), c.to_string()))
+        })
+        .collect();
+    let adder = AddingMachine::new(rels);
+    let mut solver = adder.clone();
+    solver.solve(1, vec![]);
 }

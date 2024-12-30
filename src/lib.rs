@@ -37,11 +37,11 @@ impl DelayingCounter {
     }
 }
 
-fn answer<T>(day: usize, part: usize, input: T)
+fn answer<T>(day: usize, part: usize, ans: T)
 where
     T: Display,
 {
-    println!("Day {} part {}: {}", day, part, input);
+    println!("Day {} part {}: {}", day, part, ans);
 }
 
 macro_rules! count_slow {

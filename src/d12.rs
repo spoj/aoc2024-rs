@@ -36,7 +36,21 @@ impl Board {
         let h = input.len() as isize;
         Self { data, w, h }
     }
-
+    fn parse(input: &str) -> Self {
+        let mut input = input
+            .lines()
+            .map(|s| {
+                iter::empty()
+                    .chain(vec![0; s.bytes().len()])
+                    .chain(s.bytes())
+                    .chain(vec![0; s.bytes().len()])
+                    .collect_vec()
+            })
+            .collect_vec();
+        input.insert(0, vec![0; input[0].len()]);
+        input.push(vec![0; input[0].len()]);
+        Board::new(input)
+    }
     fn in_bound(&self, pos: isize) -> bool {
         pos >= 0 && pos < self.w * self.h && self.data[pos as usize] != 255
     }
@@ -45,7 +59,7 @@ impl Board {
     }
     fn neis(&self, pos: isize) -> Vec<isize> {
         let current = self.data[pos as usize];
-        if current == 255 {
+        if current == 0 {
             vec![]
         } else {
             self.dirs()
@@ -100,22 +114,6 @@ impl Board {
         }
 
         out
-    }
-
-    fn parse(input: &str) -> Self {
-        let mut input = input
-            .lines()
-            .map(|s| {
-                iter::empty()
-                    .chain(vec![0; s.bytes().len()])
-                    .chain(s.bytes())
-                    .chain(vec![0; s.bytes().len()])
-                    .collect_vec()
-            })
-            .collect_vec();
-        input.insert(0, vec![0; input[0].len()]);
-        input.push(vec![0; input[0].len()]);
-        Board::new(input)
     }
 }
 
