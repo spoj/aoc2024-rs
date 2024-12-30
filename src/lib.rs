@@ -2,7 +2,6 @@
 #![allow(unused_macros)]
 
 use std::{
-    borrow::Borrow,
     fmt::Display,
     io::{Stdout, Write, stdout},
     thread::sleep,

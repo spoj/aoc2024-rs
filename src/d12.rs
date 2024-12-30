@@ -63,12 +63,24 @@ impl Board {
             (pos + self.w, (-1, 0)),
         ]
     }
-    fn dual_circles(&self, pos: isize, (x, y): (isize, isize)) -> Vec<(isize, (isize, isize))> {
+    fn dual(&self, pos: isize, (x, y): (isize, isize)) -> Vec<(isize, (isize, isize))> {
         vec![
             (pos + 1, (-x, 0)),
             (pos, (x, 0)),
-            (pos +  self.w, (0, -y)),
+            (pos + self.w, (0, -y)),
             (pos, (0, y)),
+        ]
+    }
+    fn dual_circle(&self, pos: isize) -> Vec<(isize, (isize, isize))> {
+        vec![
+            (pos, (1, 0)),
+            (pos + 1, (-1, 0)),
+            (pos, (0, -1)),
+            (pos + self.w, (0, 1)),
+            (pos + 1, (0, 1)),
+            (pos + 1 + self.w, (0, -1)),
+            (pos + self.w, (-1, 0)),
+            (pos + self.w + 1, (1, 0)),
         ]
     }
     fn regions(&self) -> Vec<BTreeSet<isize>> {
@@ -162,7 +174,7 @@ pub fn part2(input: &str) {
         .into_iter()
         .map(|reg| {
             let area = reg.len();
-            let circles = reg.iter().flat_map(|loc| b.circle(*loc)).fold(
+            let circles = reg.iter().flat_map(|loc| b.dual_circle(*loc)).fold(
                 BTreeMap::new(),
                 |mut out: BTreeMap<isize, (isize, isize)>, (at, vec)| {
                     let e = out.entry(at).or_default();
@@ -171,19 +183,7 @@ pub fn part2(input: &str) {
                     out
                 },
             );
-            let diffed = circles
-                .into_iter()
-                .flat_map(|(pos, (x, y))| b.dual_circles(pos, (x, y)))
-                .fold(
-                    BTreeMap::new(),
-                    |mut out: BTreeMap<isize, (isize, isize)>, (at, vec)| {
-                        let e = out.entry(at).or_default();
-                        e.0 += vec.0;
-                        e.1 += vec.1;
-                        out
-                    },
-                );
-            let sides: usize = diffed
+            let sides: usize = circles
                 .values()
                 .map(|(a, b)| (a.abs() + b.abs()) as usize)
                 .sum::<usize>()
