@@ -12,7 +12,7 @@ fn d00() {
 
 fn dlearn() {
     use aoc2024_rs::dlearn::*;
-    trying();
+    search();
     println!();
 }
 
@@ -110,10 +110,10 @@ fn d11() {
 }
 fn d12() {
     use aoc2024_rs::d12::*;
-    part1(SAMPLE);
-    part1(INPUT);
-    // part2(SAMPLE);
-    // part2(INPUT);
+    // part1(SAMPLE);
+    // part1(INPUT);
+    part2(SAMPLE);
+    part2(INPUT);
     println!();
 }
 fn d13() {
@@ -229,7 +229,7 @@ fn main() {
     // d09();
     // d10();
     // d11();
-    // d12();
+    d12();
     // d13();
     // d14();
     // d15();
@@ -243,6 +243,5 @@ fn main() {
     // d23();
     // d25();
     // d24();
-    // d21();
-    dlearn();
+    // dlearn();
 }

@@ -1,12 +1,23 @@
 use std::{
-    collections::{BTreeSet, HashMap},
+    collections::{BTreeMap, BTreeSet, HashMap},
     iter,
 };
 
 use itertools::Itertools;
 
-pub static SAMPLE: &str = r#"AA
-AA"#;
+use crate::answer;
+
+pub static SAMPLE: &str = r#"RRRRIICCFF
+RRRRIICCCF
+VVRRRCCFFF
+VVRCCCJFFF
+VVVVCJJCFE
+VVIVCCJJEE
+VVIIICJJEE
+MIIIIIJJEE
+MIIISIJEEE
+MMMISSJEEE
+"#;
 
 pub static INPUT: &str = include_str!("../data/d12.txt");
 
@@ -32,43 +43,61 @@ impl Board {
     fn dirs(&self) -> [isize; 4] {
         [-self.w, 1, self.w, -1]
     }
-    fn neis(&self, pos: usize) -> Vec<usize> {
-        let current = self.data[pos];
+    fn neis(&self, pos: isize) -> Vec<isize> {
+        let current = self.data[pos as usize];
         if current == 255 {
             vec![]
         } else {
             self.dirs()
                 .into_iter()
-                .map(|d| pos as isize + d)
+                .map(|d| pos + d)
                 .filter(|next| self.in_bound(*next))
-                .map(|x| x as usize)
                 .collect_vec()
         }
     }
-    fn recolor(&mut self) {
-        let mut old = vec![99999; self.data.len()];
-        std::mem::swap(&mut old, &mut self.data);
-        let mut locs: BTreeSet<usize> = (0..old.len()).collect();
-        let mut q: Vec<usize> = Vec::new();
-        let mut n = 1;
-        while let Some(i) = locs.pop_first() {
-            q.push(i);
-            let m = old[i];
-            n += 1;
-            while let Some(j) = q.pop() {
-                locs.remove(&j);
-                let neis = self.neis(j);
-                neis.iter()
-                    .filter(|k| old[**k] == m)
-                    .filter(|k| self.data[**k] == 99999)
-                    .for_each(|k| {
-                        q.push(*k);
-                    });
-
-                self.data[j] = if old[j] == 0 { 0 } else { n };
-            }
-        }
+    fn circle(&self, pos: isize) -> Vec<(isize, (isize, isize))> {
+        vec![
+            (pos, (1, 0)),
+            (pos, (0, -1)),
+            (pos + 1, (0, 1)),
+            (pos + self.w, (-1, 0)),
+        ]
     }
+    fn dual_circles(&self, pos: isize, (x, y): (isize, isize)) -> Vec<(isize, (isize, isize))> {
+        vec![
+            (pos + 1, (-x, 0)),
+            (pos, (x, 0)),
+            (pos +  self.w, (0, -y)),
+            (pos, (0, y)),
+        ]
+    }
+    fn regions(&self) -> Vec<BTreeSet<isize>> {
+        let mut out = Vec::new();
+        let mut locations: BTreeSet<isize> = (0..self.data.len()).map(|x| x as isize).collect();
+        while let Some(init) = locations.pop_first() {
+            let letter = self.data[init as usize];
+            if letter == 0 {
+                continue;
+            }
+            let mut reached: BTreeSet<isize> = BTreeSet::new();
+            let mut stack = vec![init];
+            while let Some(node) = stack.pop() {
+                if !reached.contains(&node) {
+                    reached.insert(node);
+                    locations.remove(&node);
+                    stack.extend(
+                        self.neis(node)
+                            .iter()
+                            .filter(|loc| self.data[**loc as usize] == letter),
+                    );
+                }
+            }
+            out.push(reached);
+        }
+
+        out
+    }
+
     fn parse(input: &str) -> Self {
         let mut input = input
             .lines()
@@ -85,64 +114,6 @@ impl Board {
         Board::new(input)
     }
 
-    fn peri(&self) -> HashMap<usize, usize> {
-        let mut out: HashMap<usize, usize> = HashMap::new();
-        self.data.iter().tuple_windows().for_each(|(a, b)| {
-            if a != b {
-                *out.entry(*a).or_default() += 1;
-                *out.entry(*b).or_default() += 1;
-            }
-        });
-
-        (0..self.w)
-            .flat_map(|i| (0..self.h).map(move |j| i + j * self.w))
-            .map(|pos| self.data[pos as usize])
-            .tuple_windows()
-            .for_each(|(a, b)| {
-                if a != b {
-                    *out.entry(a).or_default() += 1;
-                    *out.entry(b).or_default() += 1;
-                }
-            });
-        out.remove(&0);
-        out
-    }
-    fn pre_sides(&self) -> HashMap<usize, usize> {
-        let mut out1: HashMap<usize, Vec<usize>> = HashMap::new();
-        let mut out2: HashMap<usize, Vec<usize>> = HashMap::new();
-        self.data
-            .iter()
-            .tuple_windows()
-            .enumerate()
-            .for_each(|(i, (a, b))| {
-                if a != b {
-                    out1.entry(*a).or_default().push(self.transpose(i));
-                    out1.entry(*b).or_default().push(self.transpose(i));
-                }
-            });
-
-        (0..self.w)
-            .flat_map(|i| (0..self.h).map(move |j| i + j * self.w))
-            .map(|pos| self.data[pos as usize])
-            .tuple_windows()
-            .enumerate()
-            .for_each(|(i, (a, b))| {
-                if a != b {
-                    out2.entry(a).or_default().push(i);
-                    out2.entry(b).or_default().push(i);
-                }
-            });
-        let mut output: HashMap<usize, usize> = HashMap::new();
-        dbg!(&out1);
-        dbg!(&out2);
-        out1.into_iter()
-            .for_each(|(a, b)| *output.entry(a).or_default() += discons(b));
-        out2.into_iter()
-            .for_each(|(a, b)| *output.entry(a).or_default() += discons(b));
-        output.remove(&0);
-        dbg!(&output);
-        output
-    }
     fn transpose(&self, loc: usize) -> usize {
         let x = loc % self.w as usize;
         let y = loc / self.w as usize;
@@ -156,47 +127,69 @@ impl Board {
         out.remove(&0);
         out
     }
-    fn prices(&self) -> HashMap<usize, usize> {
-        let a = self.areas();
-        let p = self.peri();
-        let ans = a.iter().map(|(k, v)| (*k, p.get(k).unwrap() * v)).collect();
-        ans
-    }
-    fn prices2(&self) -> HashMap<usize, usize> {
-        let a = self.areas();
-        let p = self.pre_sides();
-        let ans = a
-            .iter()
-            .map(|(k, v)| {
-                // dbg!((p.get(k).unwrap(), v));
-                (*k, p.get(k).unwrap() * v)
-            })
-            .collect();
-        ans
-    }
 }
 
 pub fn part1(input: &str) {
-    let mut b = Board::parse(input);
-    b.recolor();
-    dbg!(b.prices().values().sum::<usize>());
-}
-
-fn discons(mut data: Vec<usize>) -> usize {
-    data.sort();
-    let ans = data
-        .iter()
-        .tuple_windows()
-        .filter(|(a, b)| **a + 1 != **b)
-        .count()
-        + 1;
-    // println!("{:?} {}segs", &data, ans);
-    ans
+    let b = Board::parse(input);
+    let x: usize = b
+        .regions()
+        .into_iter()
+        .map(|reg| {
+            let area = reg.len();
+            let circles = reg.iter().flat_map(|loc| b.circle(*loc)).fold(
+                BTreeMap::new(),
+                |mut out: BTreeMap<isize, (isize, isize)>, (at, vec)| {
+                    let e = out.entry(at).or_default();
+                    e.0 += vec.0;
+                    e.1 += vec.1;
+                    out
+                },
+            );
+            let peri: usize = circles
+                .values()
+                .map(|(a, b)| (a.abs() + b.abs()) as usize)
+                .sum();
+            peri * area
+        })
+        .sum();
+    answer(12, 1, x);
 }
 
 pub fn part2(input: &str) {
-    let mut b = Board::parse(input);
-    b.recolor();
-    dbg!(b.prices2().values().sum::<usize>());
-    todo!();
+    let b = Board::parse(input);
+    let x: usize = b
+        .regions()
+        .into_iter()
+        .map(|reg| {
+            let area = reg.len();
+            let circles = reg.iter().flat_map(|loc| b.circle(*loc)).fold(
+                BTreeMap::new(),
+                |mut out: BTreeMap<isize, (isize, isize)>, (at, vec)| {
+                    let e = out.entry(at).or_default();
+                    e.0 += vec.0;
+                    e.1 += vec.1;
+                    out
+                },
+            );
+            let diffed = circles
+                .into_iter()
+                .flat_map(|(pos, (x, y))| b.dual_circles(pos, (x, y)))
+                .fold(
+                    BTreeMap::new(),
+                    |mut out: BTreeMap<isize, (isize, isize)>, (at, vec)| {
+                        let e = out.entry(at).or_default();
+                        e.0 += vec.0;
+                        e.1 += vec.1;
+                        out
+                    },
+                );
+            let sides: usize = diffed
+                .values()
+                .map(|(a, b)| (a.abs() + b.abs()) as usize)
+                .sum::<usize>()
+                / 2;
+            sides * area
+        })
+        .sum();
+    answer(12, 2, x);
 }

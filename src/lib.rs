@@ -2,6 +2,8 @@
 #![allow(unused_macros)]
 
 use std::{
+    borrow::Borrow,
+    fmt::Display,
     io::{Stdout, Write, stdout},
     thread::sleep,
     time::Duration,
@@ -36,6 +38,13 @@ impl DelayingCounter {
     }
 }
 
+fn answer<T>(day: usize, part: usize, input: T)
+where
+    T: Display,
+{
+    println!("Day {} part {}: {}", day, part, input);
+}
+
 macro_rules! count_slow {
     ($x:expr) => {
         use crate::DelayingCounter;
@@ -65,7 +74,6 @@ macro_rules! count_fast {
 }
 
 pub mod d00;
-pub mod dlearn;
 pub mod d01;
 pub mod d02;
 pub mod d03;
@@ -89,5 +97,6 @@ pub mod d20;
 pub mod d21;
 pub mod d22;
 pub mod d23;
-pub mod d25;
 pub mod d24;
+pub mod d25;
+pub mod dlearn;

@@ -1,8 +1,4 @@
-use std::
-    collections::{HashMap, VecDeque, hash_map::Entry}
-;
-
-use itertools::{Itertools, repeat_n};
+use std::collections::{HashMap, VecDeque, hash_map::Entry};
 
 pub static SAMPLE: &str = r#"029A"#;
 pub static INPUT: &str = include_str!("../data/d00.txt");
@@ -21,9 +17,9 @@ static A: u8 = b'A';
 static SPACE: u8 = b' ';
 
 #[derive(Clone, Debug)]
-struct DPAD {}
+struct Dpad {}
 
-impl DPAD {
+impl Dpad {
     fn new() -> Self {
         Self {}
     }
@@ -62,11 +58,10 @@ impl DPAD {
         }
         done[&to].clone()
     }
-
 }
 
 pub fn part1(input: &str) {
-    let d = DPAD::new();
+    let d = Dpad::new();
     d.short(b'A', b'5')
         .iter()
         .for_each(|b| println!("{}", *b as char));

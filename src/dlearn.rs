@@ -5,7 +5,8 @@ use std::{
 
 use itertools::Itertools;
 
-static INPUT: &str = r"
+pub fn search() {
+    static INPUT: &str = r"
 1-2
 2-3
 3-6
@@ -16,8 +17,6 @@ static INPUT: &str = r"
 1-4
 5-8
 ";
-
-pub fn trying() {
     let adj = INPUT
         .lines()
         .filter(|l| !l.is_empty())
@@ -35,7 +34,8 @@ pub fn trying() {
             conn
         },
     );
-    // dbg!(conn);
+
+    // breadth first search
     let mut bfs = HashMap::new();
     let mut q = VecDeque::new();
     q.push_back((0, '1', '1'));
@@ -48,6 +48,7 @@ pub fn trying() {
     println!("BFS");
     println!("{:?}", bfs.iter().sorted().format("\n"));
 
+    // depth first search
     let mut dfs = HashMap::new();
     let mut q = Vec::new();
     q.push((0, '1', '1'));
@@ -60,6 +61,7 @@ pub fn trying() {
     println!("DFS");
     println!("{:?}", dfs.iter().sorted().format("\n"));
 
+    // dijkstra
     let mut dijk = HashMap::new();
     let mut q = BinaryHeap::new();
     q.push((Reverse(0), '1', '1'));
