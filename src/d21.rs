@@ -61,6 +61,7 @@ impl Dpad {
 }
 
 pub fn part1(input: &str) {
+    dbg!(&input);
     let d = Dpad::new();
     d.short(b'A', b'5')
         .iter()

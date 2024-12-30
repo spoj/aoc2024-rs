@@ -1,5 +1,5 @@
 use std::{
-    collections::{BTreeMap, BTreeSet, HashMap},
+    collections::{BTreeMap, BTreeSet},
     iter,
 };
 
@@ -63,14 +63,6 @@ impl Board {
             (pos + self.w, (-1, 0)),
         ]
     }
-    fn dual(&self, pos: isize, (x, y): (isize, isize)) -> Vec<(isize, (isize, isize))> {
-        vec![
-            (pos + 1, (-x, 0)),
-            (pos, (x, 0)),
-            (pos + self.w, (0, -y)),
-            (pos, (0, y)),
-        ]
-    }
     fn dual_circle(&self, pos: isize) -> Vec<(isize, (isize, isize))> {
         vec![
             (pos, (1, 0)),
@@ -124,20 +116,6 @@ impl Board {
         input.insert(0, vec![0; input[0].len()]);
         input.push(vec![0; input[0].len()]);
         Board::new(input)
-    }
-
-    fn transpose(&self, loc: usize) -> usize {
-        let x = loc % self.w as usize;
-        let y = loc / self.w as usize;
-        x * self.h as usize + y
-    }
-    fn areas(&self) -> HashMap<usize, usize> {
-        let mut out: HashMap<usize, usize> = HashMap::new();
-        self.data.iter().for_each(|a| {
-            *out.entry(*a).or_default() += 1;
-        });
-        out.remove(&0);
-        out
     }
 }
 

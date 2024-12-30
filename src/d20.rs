@@ -32,7 +32,6 @@ static WALL: u8 = b'#';
 struct Board {
     data: Vec<u8>,
     w: isize,
-    h: isize,
 }
 
 impl Board {
@@ -40,8 +39,7 @@ impl Board {
         let data = input.concat();
         let data: Vec<u8> = data.into_iter().collect();
         let w = input[0].len() as isize;
-        let h = input.len() as isize;
-        Self { data, w, h }
+        Self { data, w }
     }
 
     fn parse(input: &str) -> Self {
@@ -76,12 +74,7 @@ impl Board {
             }
         })
     }
-    fn is_end(&self, loc: isize) -> bool {
-        self.data[loc as usize] == END
-    }
-    fn is_start(&self, loc: isize) -> bool {
-        self.data[loc as usize] == START
-    }
+
     fn start_to_end(&self) -> usize {
         self.dist_from_loc(self.find_start())[&self.find_end()]
     }
@@ -120,15 +113,6 @@ impl Board {
             }
         }
         out
-    }
-    fn pretty(&self) {
-        for (i, v) in self.data.iter().enumerate() {
-            if i % self.w as usize == 0 {
-                println!();
-            }
-            print!("{}", *v as char);
-        }
-        println!();
     }
 }
 
