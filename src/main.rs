@@ -134,10 +134,10 @@ fn d14() {
 }
 fn d15() {
     use aoc2024_rs::d15::*;
-    part1(SAMPLE);
-    part1(INPUT);
-    // part2(SAMPLE);
-    // part2(INPUT);
+    // part1(SAMPLE);
+    // part1(INPUT);
+    part2(SAMPLE);
+    part2(INPUT);
     println!();
 }
 fn d16() {
@@ -234,7 +234,7 @@ fn main() {
     // d12();
     // d13();
     // d14();
-    // d15();
+    d15();
     // d16();
     // d17();
     // d18();
@@ -244,6 +244,6 @@ fn main() {
     // d22();
     // d23();
     // d25();
-    d24();
+    // d24();
     // dlearn();
 }

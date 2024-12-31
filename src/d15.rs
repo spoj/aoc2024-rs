@@ -33,8 +33,8 @@ static RIGHT: u8 = b'>';
 static BOT: u8 = b'@';
 static WALL: u8 = b'#';
 static FOOD: u8 = b'O';
-static _BOX1: u8 = b'[';
-static _BOX2: u8 = b']';
+static BOX1: u8 = b'[';
+static BOX2: u8 = b']';
 static EMPTY: u8 = b'.';
 
 #[derive(Clone, Debug)]
@@ -45,7 +45,7 @@ struct Board {
 }
 
 impl Board {
-    fn _from1(input: Board) -> Self {
+    fn from1(input: Board) -> Self {
         let data = input
             .data
             .into_iter()
@@ -118,7 +118,72 @@ impl Board {
             }
         }
     }
-    
+    fn check2(&self, loc: isize, mv: u8) -> bool {
+        let dir = self.dir(mv);
+        match self.data[loc as usize] {
+            x if x == BOT => self.check2(loc + dir, mv),
+            x if x == WALL => false,
+            x if x == BOX1 => match mv {
+                m if m == UP || m == DOWN => {
+                    self.check2(loc + dir, mv) && self.check2(loc + dir + 1, mv)
+                }
+                m if m == LEFT => self.check2(loc + dir, mv),
+                m if m == RIGHT => self.check2(loc + dir + dir, mv),
+                _ => unreachable!(),
+            },
+            x if x == BOX2 => self.check2(loc - 1, mv),
+            x if x == EMPTY => true,
+            x => {
+                println!("got a {}", x as char);
+                unreachable!()
+            }
+        }
+    }
+    fn rec_move(&mut self, loc: isize, mv: u8) {
+        let dir = self.dir(mv);
+        match self.data[loc as usize] {
+            x if x == BOT => {
+                self.rec_move(loc + dir, mv);
+                self.data[loc as usize] = EMPTY;
+                self.data[(loc + dir) as usize] = BOT;
+            }
+            x if x == BOX1 => match mv {
+                m if m == UP || m == DOWN => {
+                    self.rec_move(loc + dir, mv);
+                    self.rec_move(loc + dir + 1, mv);
+                    self.data[loc as usize] = EMPTY;
+                    self.data[(loc + dir) as usize] = BOX1;
+                    self.data[(loc + 1) as usize] = EMPTY;
+                    self.data[(loc + 1 + dir) as usize] = BOX2;
+                }
+                m if m == LEFT => {
+                    self.rec_move(loc + dir, mv);
+                    self.data[loc as usize] = BOX2;
+                    self.data[(loc + dir) as usize] = BOX1;
+                    self.data[(loc - dir) as usize] = EMPTY;
+                }
+                m if m == RIGHT => {
+                    self.rec_move(loc + dir + dir, mv);
+                    self.data[loc as usize] = EMPTY;
+                    self.data[(loc + dir) as usize] = BOX1;
+                    self.data[(loc + dir + dir) as usize] = BOX2;
+                }
+                _ => unreachable!(),
+            },
+
+            x if x == BOX2 => self.rec_move(loc - 1, mv),
+            _ => {}
+        }
+    }
+    fn checked_move_2(&mut self, loc: isize, mv: u8) -> bool {
+        if self.check2(loc, mv) {
+            self.rec_move(loc, mv);
+            true
+        } else {
+            false
+        }
+    }
+
     fn find_bot(&self) -> isize {
         self.data.iter().position(|x| *x == BOT).unwrap() as isize
     }
@@ -137,7 +202,7 @@ impl Board {
             .iter()
             .enumerate()
             .map(|(i, v)| {
-                if *v == FOOD {
+                if *v == FOOD || *v == BOX1 {
                     i / self.w as usize * 100 + i % self.w as usize
                 } else {
                     0
@@ -163,5 +228,18 @@ pub fn part1(input: &str) {
     dbg!(board.gps_sum());
 }
 pub fn part2(input: &str) {
-    println!("{}", input);
+    let (map, moves) = input.split_once("\n\n").unwrap();
+    let board = Board::parse(map);
+    let mut board = Board::from1(board);
+    let mut cursor = board.find_bot();
+    for mv in moves
+        .bytes()
+        .filter(|mv| [UP, DOWN, LEFT, RIGHT].contains(mv))
+    {
+        if board.checked_move_2(cursor, mv) {
+            cursor += board.dir(mv);
+        }
+    }
+    board.pretty();
+    dbg!(board.gps_sum());
 }
