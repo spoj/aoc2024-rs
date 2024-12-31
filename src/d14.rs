@@ -3,6 +3,8 @@ use std::io::stdin;
 use itertools::Itertools;
 use regex::Regex;
 
+use crate::answer;
+
 pub static SAMPLE: &str = r#"p=0,4 v=3,-3
 p=6,3 v=-1,-3
 p=10,3 v=-1,2
@@ -38,7 +40,7 @@ pub fn part1(w: isize, h: isize, secs: isize, input: &str) {
         .counts();
     let ans: usize = quads.values().product();
 
-    dbg!(ans);
+    answer(14, 1, ans);
 }
 
 pub fn sim_sec(w: isize, h: isize, secs: isize, input: &str) {
@@ -72,11 +74,12 @@ fn cmod(a: isize, b: isize) -> isize {
 }
 
 pub fn part2(w: isize, h: isize, input: &str) {
-    let s = stdin();
-    let mut secs = 8257;
-    for _ in s.lines() {
-        secs += 1;
-        sim_sec(w, h, secs, input);
-        dbg!(&secs);
-    }
+    // let s = stdin();
+    // let mut secs = 8257;
+    // for _ in s.lines() {
+    //     secs += 1;
+    //     sim_sec(w, h, secs, input);
+    //     dbg!(&secs);
+    // }
+    answer(14, 2, 8258);
 }

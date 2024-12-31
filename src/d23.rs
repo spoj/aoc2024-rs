@@ -2,6 +2,8 @@ use std::collections::{BTreeSet, HashMap, HashSet};
 
 use itertools::Itertools;
 
+use crate::answer;
+
 pub static SAMPLE: &str = r#"kh-tc
 qp-kh
 de-cg
@@ -64,7 +66,7 @@ pub fn part1(input: &str) {
         .into_iter()
         .filter(|v| v.iter().any(|s| s.starts_with('t')))
         .count();
-    dbg!(ans);
+    answer(23, 1, ans);
 }
 
 pub fn part2(input: &str) {
@@ -112,5 +114,5 @@ pub fn part2(input: &str) {
     }
     let ans = islands.first().unwrap();
     let day23_part2 = format!("{}", ans.iter().format(","));
-    dbg!(day23_part2);
+    answer(23, 2, day23_part2);
 }

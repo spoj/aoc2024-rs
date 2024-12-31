@@ -2,6 +2,8 @@ use std::iter::repeat_n;
 
 use itertools::Itertools;
 
+use crate::answer;
+
 pub static SAMPLE: &str = r#"2333133121414131402"#;
 pub static INPUT: &str = include_str!("../data/d09.txt");
 
@@ -34,7 +36,7 @@ pub fn part1(input: &str) {
         }
     }
     let day9_part1: usize = disk.iter().enumerate().map(|(a, b)| a * b).sum();
-    dbg!(day9_part1);
+    answer(9, 1, day9_part1);
 }
 
 pub fn part2(input: &str) {
@@ -66,5 +68,5 @@ pub fn part2(input: &str) {
         .into_iter()
         .map(|(start, len, data)| (start + start + len - 1) * len / 2 * data)
         .sum();
-    dbg!(day9_part2);
+    answer(9, 2, day9_part2);
 }

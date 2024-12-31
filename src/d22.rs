@@ -5,6 +5,8 @@ use std::{
 
 use itertools::Itertools;
 
+use crate::answer;
+
 pub static SAMPLE: &str = r#"1
 2
 3
@@ -30,7 +32,7 @@ fn gens(from: isize, steps: isize) -> isize {
 pub fn part1(input: &str) {
     println!("{}", input);
     let ans: isize = input.lines().map(|l| gens(l.parse().unwrap(), 2000)).sum();
-    dbg!(ans);
+    answer(22, 1, ans);
 }
 pub fn part2(input: &str) {
     let inits: Vec<isize> = input.lines().map(|l| l.parse().unwrap()).collect_vec();
@@ -69,5 +71,5 @@ pub fn part2(input: &str) {
             a
         });
     let ans = out.iter().map(|(a, b)| (b, a)).max().unwrap();
-    dbg!(ans);
+    answer(22, 2, format!("{:?}", ans));
 }

@@ -2,6 +2,8 @@ use std::collections::HashSet;
 
 use itertools::Itertools;
 
+use crate::answer;
+
 pub static SAMPLE: &str = r#"47|53
 97|13
 97|61
@@ -54,7 +56,7 @@ pub fn part1(input: &str) {
         .filter(|report| sat_all(report, &orders))
         .map(|report| midnum(&report))
         .sum();
-    dbg!(day5_part1);
+    answer(5, 1, day5_part1);
 }
 
 fn sat_one(report: &[isize], order: &(isize, isize)) -> bool {
@@ -126,5 +128,5 @@ pub fn part2(input: &str) {
         .flat_map(|report| topo_sort(&orders, report))
         .map(|report| midnum(&report))
         .sum();
-    dbg!(day5_part2);
+    answer(5, 2, day5_part2);
 }

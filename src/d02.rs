@@ -1,5 +1,7 @@
 use itertools::Itertools;
 
+use crate::answer;
+
 pub static SAMPLE: &str = r#"7 6 4 2 1
 1 2 7 8 9
 9 7 6 2 1
@@ -20,7 +22,7 @@ pub fn part1(input: &str) {
             strict_safe(&rpt)
         })
         .count();
-    dbg!(day2_part1);
+    answer(2, 1, day2_part1);
 }
 
 pub fn part2(input: &str) {
@@ -34,7 +36,7 @@ pub fn part2(input: &str) {
             relax_safe(&rpt)
         })
         .count();
-    dbg!(day2_part2);
+    answer(2, 2, day2_part2);
 }
 
 fn strict_safe(report: &[isize]) -> bool {

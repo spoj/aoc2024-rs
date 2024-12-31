@@ -172,35 +172,39 @@ impl AddingMachine {
         true
         // false
     }
-    fn solve(&mut self, bits: usize, mut swaps: Vec<(String, String)>) -> bool {
+    fn solve(
+        &mut self,
+        bits: usize,
+        mut swaps: Vec<(String, String)>,
+    ) -> Option<Vec<(String, String)>> {
         let verified = self.ver(bits);
         if bits == 45 {
-            dbg!(swaps);
-            return true;
+            Some(swaps)
         } else if swaps.len() >= 4 && !verified {
-            return false;
-        } else if verified && self.solve(bits + 1, swaps.clone()) {
-            return true;
-        }
-        let nodes = self.nodes.clone();
-        for i in nodes.iter() {
-            // use std::{io::{Write, stdout}};
-            // print!("{}", &i[0..1]);
-            // stdout().flush().unwrap();
-            for j in nodes.iter().filter(|j| *j > i) {
-                self.swap(i, j);
-                swaps.push((i.to_string(), j.to_string()));
-                if swaps.len() <= 4 && self.ver(bits) {
-                    dbg!((bits, &swaps));
-                    if self.solve(bits + 1, swaps.clone()) {
-                        return true;
+            None
+        } else if verified {
+            self.solve(bits + 1, swaps.clone())
+        } else {
+            let nodes = self.nodes.clone();
+            for i in nodes.iter() {
+                // use std::{io::{Write, stdout}};
+                // print!("{}", &i[0..1]);
+                // stdout().flush().unwrap();
+                for j in nodes.iter().filter(|j| *j > i) {
+                    self.swap(i, j);
+                    swaps.push((i.to_string(), j.to_string()));
+                    if swaps.len() <= 4 && self.ver(bits) {
+                        // dbg!((bits, &swaps));
+                        if let Some(x) = self.solve(bits + 1, swaps.clone()) {
+                            return Some(x);
+                        }
                     }
+                    self.swap(i, j);
+                    swaps.pop();
                 }
-                self.swap(i, j);
-                swaps.pop();
             }
+            None
         }
-        false
     }
 }
 
@@ -237,5 +241,6 @@ pub fn part2(input: &str) {
         .collect();
     let adder = AddingMachine::new(rels);
     let mut solver = adder.clone();
-    solver.solve(1, vec![]);
+    let ans = solver.solve(1, vec![]);
+    answer(24, 2, format!("{:?}", ans));
 }

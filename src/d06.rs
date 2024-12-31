@@ -2,6 +2,8 @@ use std::iter;
 
 use itertools::Itertools;
 
+use crate::answer;
+
 pub static SAMPLE: &str = r#"....#.....
 .........#
 ..........
@@ -97,7 +99,7 @@ pub fn part1(input: &str) {
         }
     }
     let day6_part1 = board.count_visited();
-    dbg!(day6_part1);
+    answer(6, 1, day6_part1);
 }
 pub fn visited(input: &str) -> Vec<isize> {
     let input: Vec<Vec<_>> = input
@@ -142,7 +144,7 @@ pub fn part2(input: &str) {
         }
         board.data[i as usize] = t;
     }
-    dbg!(day6_part2);
+    answer(6, 2, day6_part2);
 }
 
 fn have_loop(board: &Board) -> bool {

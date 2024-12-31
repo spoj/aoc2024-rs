@@ -2,6 +2,8 @@ use std::iter;
 
 use itertools::Itertools;
 
+use crate::answer;
+
 pub static SAMPLE0: &str = r#"..........
 ..........
 ..........
@@ -69,7 +71,7 @@ pub fn part1(input: &str) {
         }
     }
     let day8_part1 = ans.iter().filter(|x| **x).count();
-    dbg!(day8_part1);
+    answer(8, 1, day8_part1);
 }
 
 pub fn part2(input: &str) {
@@ -102,5 +104,5 @@ pub fn part2(input: &str) {
         }
     }
     let day8_part2 = ans.iter().filter(|x| **x).count();
-    dbg!(day8_part2);
+    answer(8, 2, day8_part2);
 }

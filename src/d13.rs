@@ -1,6 +1,8 @@
 use itertools::Itertools;
 use regex::Regex;
 
+use crate::answer;
+
 pub static SAMPLE: &str = r#"Button A: X+94, Y+34
 Button B: X+22, Y+67
 Prize: X=8400, Y=5400
@@ -51,7 +53,7 @@ pub fn part1(input: &str) {
                 .min()
         })
         .sum::<isize>();
-    dbg!(day13_part1);
+    answer(13, 1, day13_part1);
 }
 
 pub fn part2(input: &str) {
@@ -66,11 +68,11 @@ pub fn part2(input: &str) {
             nums.map(|x| x.parse::<isize>().unwrap())
         })
         .collect_vec();
-    let day13_part2:isize = machines
+    let day13_part2: isize = machines
         .into_iter()
         .flat_map(|[a, b, c, d, e, f]| {
-            let f = f+10000000000000;
-            let e = e+10000000000000;
+            let f = f + 10000000000000;
+            let e = e + 10000000000000;
             // println!("det is {}",a*d-b*c);
             let i = (e * d - f * c) / (a * d - b * c);
             let j = (a * f - e * b) / (a * d - b * c);
@@ -81,5 +83,5 @@ pub fn part2(input: &str) {
             }
         })
         .sum();
-    dbg!(day13_part2);
+    answer(13, 2, day13_part2);
 }

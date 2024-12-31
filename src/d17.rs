@@ -1,5 +1,7 @@
 use itertools::Itertools;
 
+use crate::answer;
+
 pub static SAMPLE: &str = r#"Register A: 729
 Register B: 0
 Register C: 0
@@ -160,8 +162,8 @@ fn print_3bit(input: usize) -> String {
 pub fn part1(input: &str) {
     let mut x = Machine::parse(input);
     let list = x.complete();
-    let day17_part1 = list.into_iter().map(print_3bit).join(",");
-    dbg!(day17_part1);
+    let ans = list.into_iter().map(print_3bit).join(",");
+    answer(17, 1, ans);
 }
 
 pub fn part2(input: &str) {
@@ -188,6 +190,6 @@ pub fn part2(input: &str) {
     }
 
     if prog.output_with_a(seed) == need {
-        dbg!(seed);
+        answer(17, 2, seed);
     }
 }

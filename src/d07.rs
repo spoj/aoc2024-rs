@@ -1,5 +1,7 @@
 use itertools::Itertools;
 
+use crate::answer;
+
 pub static SAMPLE: &str = r#"190: 10 19
 3267: 81 40 27
 83: 17 5
@@ -31,7 +33,7 @@ pub fn part1(input: &str) {
         .filter(|(target, nums)| composable(*target, nums))
         .map(|(target, _)| target)
         .sum();
-    dbg!(day7_part1);
+    answer(7, 1, day7_part1);
 }
 
 fn composable(target: isize, nums: &[isize]) -> bool {
@@ -82,5 +84,5 @@ pub fn part2(input: &str) {
         .filter(|(target, nums)| composable2(*target, nums))
         .map(|(target, _)| target)
         .sum();
-    dbg!(day7_part2);
+    answer(7, 2, day7_part2);
 }

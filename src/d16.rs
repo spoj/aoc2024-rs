@@ -5,6 +5,8 @@ use std::{
 
 use itertools::Itertools;
 
+use crate::answer;
+
 pub static SAMPLE: &str = r#"###############
 #.......#....E#
 #.#.###.#.###.#
@@ -121,7 +123,7 @@ pub fn part1(input: &str) {
         .map(|x| -x.1)
         .min()
         .unwrap();
-    dbg!(day16_part1);
+    answer(16, 1, day16_part1);
 }
 
 pub fn part2(input: &str) {
@@ -178,8 +180,8 @@ pub fn part2(input: &str) {
             .max(dist + o3 - 1000)
             .max(output[loc as usize]);
     }
-    let part2 = output.into_iter().filter(|x| *x == -target_len).count();
-    dbg!(part2);
+    let ans = output.into_iter().filter(|x| *x == -target_len).count();
+    answer(16, 2, ans);
 }
 
 fn opposite(dir: u8) -> u8 {

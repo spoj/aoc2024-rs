@@ -2,6 +2,8 @@ use std::collections::HashMap;
 
 use itertools::Itertools;
 
+use crate::answer;
+
 pub static SAMPLE: &str = r#"3   4
 4   3
 2   5
@@ -20,7 +22,7 @@ pub fn part1(input: &str) {
     a.sort();
     b.sort();
     let day1_part1: isize = a.into_iter().zip(b).map(|(x, y)| (x - y).abs()).sum();
-    dbg!(day1_part1);
+    answer(1, 1, day1_part1);
 }
 pub fn part2(input: &str) {
     let mut a: Vec<isize> = Vec::new();
@@ -31,5 +33,5 @@ pub fn part2(input: &str) {
         *e.or_default() += 1;
     });
     let ans: isize = a.into_iter().map(|x| x * b.get(&x).unwrap_or(&0)).sum();
-    dbg!(ans);
+    answer(1, 2, ans);
 }

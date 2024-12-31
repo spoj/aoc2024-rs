@@ -1,5 +1,7 @@
 use itertools::Itertools;
 
+use crate::answer;
+
 pub static SAMPLE: &str = r#"#####
 .####
 .####
@@ -69,7 +71,7 @@ pub fn part1(input: &str) {
         .iter()
         .map(|k| locks.iter().filter(|l| compat(*k, **l)).count())
         .sum();
-    dbg!(ans);
+    answer(25, 1, ans);
 }
 
 fn compat(k: [i32; 5], l: [i32; 5]) -> bool {

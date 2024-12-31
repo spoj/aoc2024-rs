@@ -1,5 +1,7 @@
 use itertools::Itertools;
 
+use crate::answer;
+
 pub static SAMPLE: &str = "MMMSXXMASM
 MSAMXMSMSA
 AMXSXMAAMM
@@ -35,7 +37,7 @@ pub fn part1(input: &str) {
         .filter(|seq| seq[3] >= 0 && seq[3] < ww * hh)
         .filter(|seq| &seq.map(|loc| input_one[loc as usize]) == b"XMAS")
         .count();
-    dbg!(day4_part1);
+    answer(4, 1, day4_part1);
 }
 
 pub fn part2(input: &str) {
@@ -61,5 +63,5 @@ pub fn part2(input: &str) {
         .filter(|seq| seq.iter().all(|&loc| loc >= 0 && loc < ww * hh))
         .filter(|seq| &seq.map(|loc| input_one[loc as usize]) == b"AMMSS")
         .count();
-    dbg!(day4_part2);
+    answer(4, 2, day4_part2);
 }

@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use crate::answer;
+
 pub static SAMPLE: &str = r#"125 17"#;
 pub static INPUT: &str = include_str!("../data/d11.txt");
 
@@ -21,8 +23,8 @@ pub fn part1(input: &str) {
         }
         a = b;
     }
-    let day11_part2: usize = a.values().sum();
-    dbg!(day11_part2);
+    let ans: usize = a.values().sum();
+    answer(11, 1, ans);
 }
 pub fn part2(input: &str) {
     let mut a: HashMap<usize, usize> = HashMap::new();
@@ -43,7 +45,7 @@ pub fn part2(input: &str) {
         a = b;
     }
     let day11_part2: usize = a.values().sum();
-    dbg!(day11_part2);
+    answer(11, 2, day11_part2);
 }
 
 fn digits(num: usize) -> usize {

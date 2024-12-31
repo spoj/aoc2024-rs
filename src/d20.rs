@@ -6,6 +6,8 @@ use std::{
 
 use itertools::Itertools;
 
+use crate::answer;
+
 pub static SAMPLE: &str = r#"###############
 #...#...#.....#
 #.#.#.#.#.###.#
@@ -121,17 +123,17 @@ pub fn part1(thres: usize, input: &str) {
     let std_time = board.start_to_end();
     let from_start = board.dist_from_loc(board.find_start());
     let from_end = board.dist_from_loc(board.find_end());
-    let mut day20_part1 = 0;
+    let mut ans = 0;
     for (a, leg1) in from_start {
         for (b, leg2) in board.cheat_to(a, 2) {
             if let Some(leg3) = from_end.get(&b) {
                 if leg1 + leg2 + leg3 <= std_time - thres {
-                    day20_part1 += 1;
+                    ans += 1;
                 }
             }
         }
     }
-    dbg!(day20_part1);
+    answer(20, 1, ans);
 }
 
 pub fn part2(thres: usize, input: &str) {
@@ -139,15 +141,15 @@ pub fn part2(thres: usize, input: &str) {
     let std_time = board.start_to_end();
     let from_start = board.dist_from_loc(board.find_start());
     let from_end = board.dist_from_loc(board.find_end());
-    let mut day20_part2 = 0;
+    let mut ans = 0;
     for (a, leg1) in from_start {
         for (b, leg2) in board.cheat_to(a, 20) {
             if let Some(leg3) = from_end.get(&b) {
                 if leg1 + leg2 + leg3 <= std_time - thres {
-                    day20_part2 += 1;
+                    ans += 1;
                 }
             }
         }
     }
-    dbg!(day20_part2);
+    answer(20, 2, ans);
 }

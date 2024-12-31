@@ -1,5 +1,7 @@
 use std::collections::{HashMap, VecDeque, hash_map::Entry};
 
+use crate::answer;
+
 pub static SAMPLE: &str = r#"029A"#;
 pub static INPUT: &str = include_str!("../data/d00.txt");
 
@@ -74,5 +76,5 @@ pub fn part1(input: &str) {
 }
 
 pub fn part2(input: &str) {
-    dbg!(input);
+    answer(21, 2, &input[0..1]);
 }

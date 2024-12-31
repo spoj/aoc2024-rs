@@ -1,5 +1,7 @@
 use regex::Regex;
 
+use crate::answer;
+
 pub static SAMPLE: &str =
     r#"xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))"#;
 
@@ -19,7 +21,7 @@ pub fn part1(input: &str) {
             a * b
         })
         .sum();
-    dbg!(day3_part1);
+    answer(3, 1, day3_part1);
 }
 
 pub fn part2(input: &str) {
@@ -47,5 +49,5 @@ pub fn part2(input: &str) {
             }
         })
         .sum();
-    dbg!(day3_part2);
+    answer(3, 2, day3_part2);
 }

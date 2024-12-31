@@ -6,6 +6,8 @@ use std::{
 
 use itertools::Itertools;
 
+use crate::answer;
+
 pub static SAMPLE: &str = r#"5,4
 4,2
 4,5
@@ -134,7 +136,7 @@ pub fn part1(w: isize, h: isize, len: usize, input: &str) {
         }
     }
     // board.pretty();
-    dbg!(done[&board.end()]);
+    answer(18, 1, done[&board.end()]);
 }
 
 pub fn part2(w: isize, h: isize, input: &str) {
@@ -156,5 +158,5 @@ pub fn part2(w: isize, h: isize, input: &str) {
         }
     }
     let day18_part2 = bytes[a];
-    dbg!(day18_part2);
+    answer(18, 2, format!("{:?}", day18_part2));
 }

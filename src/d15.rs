@@ -2,6 +2,8 @@ use std::iter;
 
 use itertools::Itertools;
 
+use crate::answer;
+
 pub static SAMPLE: &str = r#"##########
 #..O..O.O#
 #......O.#
@@ -152,21 +154,21 @@ impl Board {
                     self.rec_move(loc + dir, mv);
                     self.rec_move(loc + dir + 1, mv);
                     self.data[loc as usize] = EMPTY;
-                    self.data[(loc + dir) as usize] = BOX1;
                     self.data[(loc + 1) as usize] = EMPTY;
+                    self.data[(loc + dir) as usize] = BOX1;
                     self.data[(loc + 1 + dir) as usize] = BOX2;
                 }
                 m if m == LEFT => {
-                    self.rec_move(loc + dir, mv);
+                    self.rec_move(loc - 1, mv);
+                    self.data[(loc - 1) as usize] = BOX1;
                     self.data[loc as usize] = BOX2;
-                    self.data[(loc + dir) as usize] = BOX1;
-                    self.data[(loc - dir) as usize] = EMPTY;
+                    self.data[(loc + 1) as usize] = EMPTY;
                 }
                 m if m == RIGHT => {
-                    self.rec_move(loc + dir + dir, mv);
+                    self.rec_move(loc + 1 + 1, mv);
                     self.data[loc as usize] = EMPTY;
-                    self.data[(loc + dir) as usize] = BOX1;
-                    self.data[(loc + dir + dir) as usize] = BOX2;
+                    self.data[(loc + 1) as usize] = BOX1;
+                    self.data[(loc + 1 + 1) as usize] = BOX2;
                 }
                 _ => unreachable!(),
             },
@@ -224,8 +226,8 @@ pub fn part1(input: &str) {
             cursor += board.dir(mv);
         }
     }
-    board.pretty();
-    dbg!(board.gps_sum());
+    // board.pretty();
+    answer(15, 1, board.gps_sum());
 }
 pub fn part2(input: &str) {
     let (map, moves) = input.split_once("\n\n").unwrap();
@@ -240,6 +242,6 @@ pub fn part2(input: &str) {
             cursor += board.dir(mv);
         }
     }
-    board.pretty();
-    dbg!(board.gps_sum());
+    // board.pretty();
+    answer(15, 2, board.gps_sum());
 }
