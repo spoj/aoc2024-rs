@@ -183,7 +183,8 @@ fn d20() {
 }
 fn d21() {
     use aoc2024_rs::d21::*;
-    // part1(SAMPLE);
+    part1(INPUT);
+    part2(INPUT);
     println!();
 }
 fn d22() {
@@ -239,10 +240,10 @@ fn main() {
     d18();
     d19();
     d20();
-    // d21();
+    d21();
     d22();
     d23();
-    d25();
     d24();
+    d25();
     // dlearn();
 }

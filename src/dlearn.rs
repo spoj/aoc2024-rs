@@ -78,3 +78,4 @@ pub fn search() {
     println!("Dijkstra");
     println!("{:?}", dijk.iter().sorted().format("\n"));
 }
+

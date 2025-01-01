@@ -1,5 +1,3 @@
-use std::io::stdin;
-
 use itertools::Itertools;
 use regex::Regex;
 
@@ -74,6 +72,9 @@ fn cmod(a: isize, b: isize) -> isize {
 }
 
 pub fn part2(w: isize, h: isize, input: &str) {
+    let _ = w;
+    let _ = h;
+    let _ = input;
     // let s = stdin();
     // let mut secs = 8257;
     // for _ in s.lines() {
