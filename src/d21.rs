@@ -1,6 +1,7 @@
+#![warn(unused)]
+
 use std::{
-    collections::{BTreeSet, HashMap, HashSet, VecDeque, hash_map::Entry},
-    convert::identity,
+    collections::{HashMap, HashSet, VecDeque},
     sync::LazyLock,
 };
 
@@ -16,18 +17,10 @@ pub static SAMPLE: &str = r#"029A
 "#;
 pub static INPUT: &str = include_str!("../data/d21.txt");
 
-static BOARD_STR: &str = r"
-789
-456
-123
- 0A";
-
 static UP: u8 = b'^';
 static DOWN: u8 = b'v';
 static LEFT: u8 = b'<';
 static RIGHT: u8 = b'>';
-static A: u8 = b'A';
-static SPACE: u8 = b' ';
 
 #[derive(Clone, Debug)]
 struct Pad {
@@ -65,9 +58,6 @@ impl Pad {
                 }));
             }
         }
-        done.iter_mut().for_each(|(to, paths)| {
-            paths.retain(|path| path.iter().chunk_by(|x| *x).into_iter().count() <= 2);
-        });
         done
     }
     fn add_cache(mut self) -> Self {
@@ -85,63 +75,6 @@ impl Pad {
         self.paths = paths;
         self
     }
-
-    fn shorts_from_to(&self, from: u8, to: u8) -> &HashSet<Vec<u8>> {
-        &self.paths[&(from, to)]
-    }
-    fn shorts_seq_int(&self, seq: &[u8]) -> HashSet<Vec<u8>> {
-        if seq.is_empty() {
-            HashSet::new()
-        } else if seq.len() == 1 {
-            self.shorts_from_to(b'A', seq[0]).clone()
-        } else {
-            let mut out = HashSet::new();
-            let prev = self.shorts_seq_int(&seq[1..]);
-            let head = self.shorts_from_to(seq[0], seq[1]);
-            for i in prev {
-                for j in head {
-                    let combined = j
-                        .clone()
-                        .into_iter()
-                        .chain(vec![b'A'])
-                        .chain(i.clone())
-                        .collect_vec();
-                    out.insert(combined);
-                }
-            }
-            out
-        }
-    }
-    fn shorts_seq(&self, seq: &[u8]) -> HashSet<Vec<u8>> {
-        let alt = [b'A'].into_iter().chain(seq.iter().copied()).collect_vec();
-        self.shorts_seq_int(&alt)
-    }
-    fn short_merge<T>(&self, seqs: T) -> impl Iterator<Item = Vec<u8>>
-    where
-        T: IntoIterator<Item = Vec<u8>>,
-    {
-        let mut min_sofar = usize::MAX;
-        let mut out = HashSet::new();
-        seqs.into_iter().for_each(|seq| {
-            let shorts = self.shorts_seq(&seq);
-            let to_add = shorts.into_iter().filter(|short| {
-                let len = short.len();
-                min_sofar = min_sofar.min(len);
-                short.len() <= min_sofar
-            });
-            out.extend(to_add);
-        });
-        out.into_iter().filter(move |x| x.len() <= min_sofar)
-    }
-}
-
-fn simple_print_utf(data: &[u8]) {
-    let string = String::from_utf8(data.to_owned()).to_owned().unwrap();
-    println!("{}", string);
-}
-
-fn num_value(data: &str) -> usize {
-    data[0..3].parse().unwrap()
 }
 
 static NUMPAD: LazyLock<HashMap<u8, Vec<(u8, u8)>>> = LazyLock::new(|| {
@@ -180,21 +113,27 @@ static DPAD: LazyLock<HashMap<u8, Vec<(u8, u8)>>> = LazyLock::new(|| {
 });
 
 pub fn part1(input: &str) {
-    let n0 = Pad::new(NUMPAD.clone()).add_cache();
-    let d1 = Pad::new(DPAD.clone()).add_cache();
-
-    let ans = input
+    let npaths = Pad::new(NUMPAD.clone()).add_cache().paths;
+    let dpaths = Pad::new(DPAD.clone()).add_cache().paths;
+    let costs: HashMap<(u8, u8), usize> = dpaths.keys().map(|pair| (*pair, 1)).collect();
+    let costs = layer(costs, &dpaths);
+    let costs = layer(costs, &dpaths);
+    let costs = layer(costs, &npaths);
+    let ans: usize = input
         .lines()
         .map(|l| {
-            let num_value: usize = l[0..3].parse().unwrap();
-            let shortest_path = d1
-                .short_merge(d1.short_merge(n0.shorts_seq(l.as_bytes())))
-                .next()
-                .unwrap();
-            shortest_path.len() * num_value
+            let mut alt = "A".to_string();
+            alt.push_str(l);
+            let pathlen = alt
+                .bytes()
+                .tuple_windows()
+                .map(|(a, b)| costs[&(a, b)])
+                .sum::<usize>();
+            let numval: usize = l[0..3].parse().unwrap();
+            numval * pathlen
         })
-        .sum::<usize>();
-    answer(21, 2, ans);
+        .sum();
+    answer(21, 1, ans);
 }
 
 fn layer(
@@ -232,34 +171,10 @@ fn layer(
 pub fn part2(input: &str) {
     let npaths = Pad::new(NUMPAD.clone()).add_cache().paths;
     let dpaths = Pad::new(DPAD.clone()).add_cache().paths;
-    let costs: HashMap<(u8, u8), usize> = dpaths
-        .iter()
-        .map(|(pair, paths)| (*pair, paths.iter().next().unwrap().len() + 1))
-        .collect();
-    let costs = layer(costs, &dpaths);
-    let costs = layer(costs, &dpaths);
-    let costs = layer(costs, &dpaths);
-    let costs = layer(costs, &dpaths);
-    let costs = layer(costs, &dpaths);
-    let costs = layer(costs, &dpaths);
-    let costs = layer(costs, &dpaths);
-    let costs = layer(costs, &dpaths);
-    let costs = layer(costs, &dpaths);
-    let costs = layer(costs, &dpaths);
-    let costs = layer(costs, &dpaths);
-    let costs = layer(costs, &dpaths);
-    let costs = layer(costs, &dpaths);
-    let costs = layer(costs, &dpaths);
-    let costs = layer(costs, &dpaths);
-    let costs = layer(costs, &dpaths);
-    let costs = layer(costs, &dpaths);
-    let costs = layer(costs, &dpaths);
-    let costs = layer(costs, &dpaths);
-    let costs = layer(costs, &dpaths);
-    let costs = layer(costs, &dpaths);
-    let costs = layer(costs, &dpaths);
-    let costs = layer(costs, &dpaths);
-    let costs = layer(costs, &dpaths);
+    let mut costs: HashMap<(u8, u8), usize> = dpaths.keys().map(|pair| (*pair, 1)).collect();
+    for _ in 0..25 {
+        costs = layer(costs, &dpaths);
+    }
     let costs = layer(costs, &npaths);
     let ans: usize = input
         .lines()

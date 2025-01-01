@@ -127,7 +127,6 @@ pub fn part1(input: &str) {
 }
 
 pub fn part2(input: &str) {
-    println!("start");
     let board = Board::parse(input);
     let mut h: BinaryHeap<(isize, (isize, u8))> = BinaryHeap::new();
     let mut from_start: HashMap<(isize, u8), isize> = HashMap::new();
@@ -159,7 +158,6 @@ pub fn part2(input: &str) {
         .map(|x| -x.1)
         .min()
         .unwrap();
-    dbg!(target_len);
 
     let mut output = vec![-999999; board.data.len()];
     for ((loc, dir), dist) in from_start {

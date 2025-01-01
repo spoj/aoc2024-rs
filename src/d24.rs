@@ -1,7 +1,8 @@
+#![warn(unused)]
 use std::{collections::HashMap, iter};
 
 use itertools::Itertools;
-use rand::{Rng, thread_rng};
+use rand::{Rng, rngs::ThreadRng, seq::SliceRandom, thread_rng};
 use regex::Regex;
 
 use crate::answer;
@@ -118,6 +119,8 @@ struct AddingMachine {
     nodes: Vec<String>,
 }
 
+static STEP: usize = 10;
+static TESTS: usize = 64;
 impl AddingMachine {
     fn new(rels: HashMap<String, (String, String, String)>) -> Self {
         let nodes = rels.keys().cloned().sorted().collect_vec();
@@ -162,7 +165,7 @@ impl AddingMachine {
     }
     fn ver(&self, bits: usize) -> bool {
         let mut rng = thread_rng();
-        for _ in 0..128 {
+        for _ in 0..TESTS {
             let x = rng.gen_range(0..1 << bits);
             let y = rng.gen_range(0..1 << bits);
             if self.add(x, y) != x + y {
@@ -170,24 +173,25 @@ impl AddingMachine {
             }
         }
         true
-        // false
     }
     fn solve(
         &mut self,
         bits: usize,
         mut swaps: Vec<(String, String)>,
+        rng: &mut ThreadRng,
     ) -> Option<Vec<(String, String)>> {
         let verified = self.ver(bits);
-        if bits == 45 {
+        if bits >= 45 {
             Some(swaps)
         } else if swaps.len() >= 4 && !verified {
             None
         } else if verified {
-            self.solve(bits + 1, swaps.clone())
+            self.solve(bits + 1, swaps.clone(), rng)
         } else {
-            let nodes = self.nodes.clone();
+            let mut nodes = self.nodes.clone();
+            nodes.shuffle(rng);
             for i in nodes.iter() {
-                // use std::{io::{Write, stdout}};
+                // use std::io::{Write, stdout};
                 // print!("{}", &i[0..1]);
                 // stdout().flush().unwrap();
                 for j in nodes.iter().filter(|j| *j > i) {
@@ -195,7 +199,7 @@ impl AddingMachine {
                     swaps.push((i.to_string(), j.to_string()));
                     if swaps.len() <= 4 && self.ver(bits) {
                         // dbg!((bits, &swaps));
-                        if let Some(x) = self.solve(bits + 1, swaps.clone()) {
+                        if let Some(x) = self.solve(bits + STEP, swaps.clone(), rng) {
                             return Some(x);
                         }
                     }
@@ -207,7 +211,6 @@ impl AddingMachine {
         }
     }
 }
-
 pub fn part1(input: &str) {
     let (a, b) = input.split_once("\n\n").unwrap();
     let init_values: HashMap<String, usize> = a
@@ -241,6 +244,12 @@ pub fn part2(input: &str) {
         .collect();
     let adder = AddingMachine::new(rels);
     let mut solver = adder.clone();
-    let ans = solver.solve(1, vec![]);
-    answer(24, 2, format!("{:?}", ans));
+    let ans = solver
+        .solve(STEP, vec![], &mut thread_rng())
+        .unwrap()
+        .into_iter()
+        .flat_map(|x| [x.0, x.1])
+        .sorted()
+        .collect_vec();
+    answer(24, 2, format!("{}", ans.into_iter().format(",")));
 }

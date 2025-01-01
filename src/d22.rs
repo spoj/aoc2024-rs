@@ -30,7 +30,6 @@ fn gens(from: isize, steps: isize) -> isize {
 }
 
 pub fn part1(input: &str) {
-    println!("{}", input);
     let ans: isize = input.lines().map(|l| gens(l.parse().unwrap(), 2000)).sum();
     answer(22, 1, ans);
 }

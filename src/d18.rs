@@ -118,7 +118,6 @@ fn passes_after(w: isize, h: isize, bytes: &[(isize, isize)]) -> bool {
 
 pub fn part1(w: isize, h: isize, len: usize, input: &str) {
     let mut board = Board::new(w, h);
-    dbg!(board.end());
     input.lines().take(len).for_each(|l| {
         let (x, y) = l.split_once(',').unwrap();
         board.corrupt_xy(x.parse().unwrap(), y.parse().unwrap());
