@@ -1,15 +1,6 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
 
-fn d00() {
-    use aoc2024_rs::d00::*;
-    // part1(SAMPLE);
-    // part1(INPUT);
-    // part2(SAMPLE);
-    // part2(INPUT);
-    println!();
-}
-
 fn dlearn() {
     use aoc2024_rs::dlearn::*;
     search();
@@ -219,7 +210,6 @@ fn d25() {
 }
 
 fn main() {
-    // d00();
     d01();
     d02();
     d03();
