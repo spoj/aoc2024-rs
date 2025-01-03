@@ -1,10 +1,26 @@
-w:
+alias w := watch
+alias wr := watch-release
+alias c := clean
+alias r := run
+alias rr := run-release
+alias b := build-all
+
+
+watch:
   cargo watch -x run
-wr:
+
+watch-release:
   cargo watch -x "run -r"
-c:
+
+clean:
   cargo clean
-rr:
-  cargo run -r
-r:
+
+run:
   cargo run
+
+run-release:
+  cargo run -r
+
+build-all:
+  cargo build
+  cargo build -r
