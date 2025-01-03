@@ -4,7 +4,7 @@ use std::{
 };
 
 use itertools::Itertools;
-use rand::{Rng, thread_rng};
+use rand::{Rng, rngs::ThreadRng, thread_rng};
 use regex::Regex;
 
 use crate::answer;
@@ -122,8 +122,8 @@ struct AddingMachine {
     likely: HashSet<(String, String)>,
 }
 
-static STEP: usize = 1;
-static TESTS: usize = 100;
+static STEP: usize = 8;
+static TESTS: usize = 64;
 impl AddingMachine {
     fn new(rels: HashMap<String, (String, String, String)>) -> Self {
         let nodes = rels.keys().cloned().sorted().collect_vec();
@@ -183,9 +183,8 @@ impl AddingMachine {
             None
         }
     }
-    fn many_coincidents(&self, tries: usize) -> HashMap<String, Vec<usize>> {
+    fn many_coincidents(&self, tries: usize, rng: &mut ThreadRng) -> HashMap<String, Vec<usize>> {
         let mut out = HashMap::new();
-        let mut rng = thread_rng();
         let mut cnt = 0;
         let bits = 44;
         while cnt < tries {
@@ -226,6 +225,7 @@ impl AddingMachine {
         &mut self,
         bits: usize,
         mut swaps: Vec<(String, String)>,
+        rng: &mut ThreadRng,
     ) -> Option<Vec<(String, String)>> {
         let verified = self.ver(bits);
         if bits >= 45 {
@@ -233,7 +233,7 @@ impl AddingMachine {
         } else if swaps.len() >= 4 && !verified {
             None
         } else if verified {
-            self.solve2(bits + 1, swaps.clone())
+            self.solve2(bits + 1, swaps.clone(), rng)
         } else {
             let nodes = self.nodes.clone();
             let rest = nodes
@@ -241,14 +241,14 @@ impl AddingMachine {
                 .into_iter()
                 .cartesian_product(nodes.clone())
                 .filter(|(a, b)| (a < b) && !(a.starts_with('z') && a.starts_with('z')));
-            self.likely_pairs();
+            self.likely_pairs(rng);
             let likely = self.likely.clone();
             let all = likely.into_iter().chain(rest);
             for (i, j) in all {
                 self.swap(&i, &j);
                 swaps.push((i.to_string(), j.to_string()));
                 if swaps.len() <= 4 && self.ver(bits) {
-                    if let Some(x) = self.solve2(bits + STEP, swaps.clone()) {
+                    if let Some(x) = self.solve2(bits + STEP, swaps.clone(), rng) {
                         return Some(x);
                     }
                 }
@@ -258,8 +258,8 @@ impl AddingMachine {
             None
         }
     }
-    fn likely_pairs(&mut self) {
-        let coincides = self.many_coincidents(16);
+    fn likely_pairs(&mut self, rng: &mut ThreadRng) {
+        let coincides = self.many_coincidents(32, rng);
         for (k1, v1) in &coincides {
             for (k2, v2) in &coincides {
                 if k1 != k2
@@ -302,7 +302,6 @@ pub fn part1(input: &str) {
     answer(24, 1, day24_part1);
 }
 
-
 pub fn part2(input: &str) {
     let (_, b) = input.split_once("\n\n").unwrap();
     let re = Regex::new(r"([0-9a-z]+) ([A-Z]+) ([0-9a-z]+) -> ([0-9a-z]+)").unwrap();
@@ -315,8 +314,9 @@ pub fn part2(input: &str) {
         .collect();
     let adder = AddingMachine::new(rels);
     let mut solver = adder.clone();
+    let mut rng = thread_rng();
     let ans = solver
-        .solve2(STEP, vec![])
+        .solve2(STEP, vec![], &mut rng)
         .unwrap()
         .into_iter()
         .flat_map(|x| [x.0, x.1])

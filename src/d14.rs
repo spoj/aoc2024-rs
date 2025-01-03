@@ -41,7 +41,7 @@ pub fn part1(w: isize, h: isize, secs: isize, input: &str) {
     answer(14, 1, ans);
 }
 
-pub fn sim_sec(w: isize, h: isize, secs: isize, input: &str) {
+pub fn sim_sec(w: isize, h: isize, secs: isize, input: &str) -> usize {
     let re = Regex::new(r"p=(\d+),(\d+) v=(-?\d+),(-?\d+)").unwrap();
     let bots: Vec<[isize; 4]> = input
         .lines()
@@ -58,13 +58,12 @@ pub fn sim_sec(w: isize, h: isize, secs: isize, input: &str) {
     final_locs
         .iter()
         .for_each(|(a, b)| output[*b as usize][*a as usize] = b'#');
-    for line in output {
-        for c in line {
-            print!("{}", c as char);
-        }
-        println!()
-    }
-    println!();
+    output
+        .iter()
+        .take(29)
+        .flatten()
+        .filter(|x| **x == b'#')
+        .count()
 }
 
 fn cmod(a: isize, b: isize) -> isize {
@@ -72,15 +71,9 @@ fn cmod(a: isize, b: isize) -> isize {
 }
 
 pub fn part2(w: isize, h: isize, input: &str) {
-    let _ = w;
-    let _ = h;
-    let _ = input;
-    // let s = stdin();
-    // let mut secs = 8257;
-    // for _ in s.lines() {
-    //     secs += 1;
-    //     sim_sec(w, h, secs, input);
-    //     dbg!(&secs);
-    // }
-    answer(14, 2, 8258);
+    let mut secs = 8250;
+    while sim_sec(w, h, secs, input) > 50 {
+        secs += 1;
+    }
+    answer(14, 2, secs);
 }

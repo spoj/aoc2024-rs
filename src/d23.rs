@@ -81,7 +81,6 @@ pub fn part2(input: &str) {
         conn.entry(b).or_default().insert(a);
     });
     let conn = conn;
-    let nodes = conn.keys().collect_vec();
 
     let mut islands: BTreeSet<BTreeSet<&str>> = Default::default();
     let mut islands_next: BTreeSet<BTreeSet<&str>> = Default::default();
@@ -96,19 +95,18 @@ pub fn part2(input: &str) {
         islands_next = islands
             .iter()
             .flat_map(|island| {
-                let eligible = nodes
+                island
                     .iter()
-                    .filter(|candidate| {
-                        island
-                            .iter()
-                            .all(|member| conn[**candidate].contains(member))
+                    .map(|m| conn[m].clone())
+                    .reduce(|a, b| a.intersection(&b).copied().collect())
+                    .unwrap()
+                    .iter()
+                    .map(|new_node| {
+                        let mut new_island = island.clone();
+                        new_island.insert(new_node);
+                        new_island
                     })
-                    .collect_vec();
-                eligible.into_iter().map(move |new_node| {
-                    let mut new_island = island.clone();
-                    new_island.insert(new_node);
-                    new_island
-                })
+                    .collect_vec()
             })
             .collect();
     }
