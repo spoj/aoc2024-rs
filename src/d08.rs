@@ -2,8 +2,6 @@ use std::iter;
 
 use itertools::Itertools;
 
-use crate::answer;
-
 pub static SAMPLE0: &str = r#"..........
 ..........
 ..........
@@ -42,7 +40,7 @@ pub static SAMPLE2: &str = r#"T.........
 
 pub static INPUT: &str = include_str!("../data/d08.txt");
 
-pub fn part1(input: &str) {
+pub fn part1(input: &str) -> usize {
     let input: Vec<Vec<_>> = input
         .lines()
         .map(|s| {
@@ -71,10 +69,10 @@ pub fn part1(input: &str) {
         }
     }
     let day8_part1 = ans.iter().filter(|x| **x).count();
-    answer(8, 1, day8_part1);
+    day8_part1
 }
 
-pub fn part2(input: &str) {
+pub fn part2(input: &str) -> usize {
     let input: Vec<Vec<_>> = input
         .lines()
         .map(|s| {
@@ -104,5 +102,5 @@ pub fn part2(input: &str) {
         }
     }
     let day8_part2 = ans.iter().filter(|x| **x).count();
-    answer(8, 2, day8_part2);
+    day8_part2
 }

@@ -2,8 +2,6 @@ use std::collections::HashSet;
 
 use itertools::Itertools;
 
-use crate::answer;
-
 pub static SAMPLE: &str = r#"47|53
 97|13
 97|61
@@ -34,7 +32,7 @@ pub static SAMPLE: &str = r#"47|53
 97,13,75,29,47"#;
 pub static INPUT: &str = include_str!("../data/d05.txt");
 
-pub fn part1(input: &str) {
+pub fn part1(input: &str) -> isize {
     let (a, b) = input.split_once("\n\n").unwrap();
     let orders: Vec<(isize, isize)> = a
         .lines()
@@ -51,12 +49,11 @@ pub fn part1(input: &str) {
                 .collect_vec()
         })
         .collect_vec();
-    let day5_part1: isize = reports
+    reports
         .into_iter()
         .filter(|report| sat_all(report, &orders))
         .map(|report| midnum(&report))
-        .sum();
-    answer(5, 1, day5_part1);
+        .sum()
 }
 
 fn sat_one(report: &[isize], order: &(isize, isize)) -> bool {
@@ -105,7 +102,7 @@ fn midnum(report: &[isize]) -> isize {
     report[report.len() / 2]
 }
 
-pub fn part2(input: &str) {
+pub fn part2(input: &str) -> isize {
     let (a, b) = input.split_once("\n\n").unwrap();
     let orders: Vec<(isize, isize)> = a
         .lines()
@@ -122,11 +119,10 @@ pub fn part2(input: &str) {
                 .collect_vec()
         })
         .collect_vec();
-    let day5_part2: isize = reports
+    reports
         .iter()
         .filter(|report| !sat_all(report, &orders))
         .flat_map(|report| topo_sort(&orders, report))
         .map(|report| midnum(&report))
-        .sum();
-    answer(5, 2, day5_part2);
+        .sum()
 }

@@ -1,7 +1,5 @@
 use itertools::Itertools;
 
-use crate::answer;
-
 pub static SAMPLE: &str = r#"190: 10 19
 3267: 81 40 27
 83: 17 5
@@ -14,8 +12,7 @@ pub static SAMPLE: &str = r#"190: 10 19
 "#;
 pub static INPUT: &str = include_str!("../data/d07.txt");
 
-
-pub fn part1(input: &str) {
+pub fn part1(input: &str) -> isize {
     let input = input
         .lines()
         .map(|st| {
@@ -33,7 +30,7 @@ pub fn part1(input: &str) {
         .filter(|(target, nums)| composable(*target, nums))
         .map(|(target, _)| target)
         .sum();
-    answer(7, 1, day7_part1);
+    day7_part1
 }
 
 fn composable(target: isize, nums: &[isize]) -> bool {
@@ -66,7 +63,7 @@ fn composable2(target: isize, nums: &[isize]) -> bool {
     }
 }
 
-pub fn part2(input: &str) {
+pub fn part2(input: &str) -> isize {
     let input = input
         .lines()
         .map(|st| {
@@ -84,5 +81,5 @@ pub fn part2(input: &str) {
         .filter(|(target, nums)| composable2(*target, nums))
         .map(|(target, _)| target)
         .sum();
-    answer(7, 2, day7_part2);
+    day7_part2
 }

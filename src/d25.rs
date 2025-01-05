@@ -1,7 +1,5 @@
 use itertools::Itertools;
 
-use crate::answer;
-
 pub static SAMPLE: &str = r#"#####
 .####
 .####
@@ -44,7 +42,7 @@ pub static SAMPLE: &str = r#"#####
 "#;
 pub static INPUT: &str = include_str!("../data/d25.txt");
 
-pub fn part1(input: &str) {
+pub fn part1(input: &str) -> usize {
     let mut keys: Vec<_> = vec![];
     let mut locks: Vec<_> = vec![];
     input.split("\n\n").for_each(|blk| {
@@ -71,7 +69,7 @@ pub fn part1(input: &str) {
         .iter()
         .map(|k| locks.iter().filter(|l| compat(*k, **l)).count())
         .sum();
-    answer(25, 1, ans);
+    ans
 }
 
 fn compat(k: [i32; 5], l: [i32; 5]) -> bool {

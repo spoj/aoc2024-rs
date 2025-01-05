@@ -1,7 +1,5 @@
 use regex::Regex;
 
-use crate::answer;
-
 pub static SAMPLE: &str =
     r#"xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))"#;
 
@@ -10,25 +8,22 @@ pub static SAMPLE2: &str =
 
 pub static INPUT: &str = include_str!("../data/d03.txt");
 
-pub fn part1(input: &str) {
+pub fn part1(input: &str) -> usize {
     let re = Regex::new("mul\\(([0-9]+),([0-9]+)\\)").unwrap();
-    let day3_part1: usize = re
-        .captures_iter(input)
+    re.captures_iter(input)
         .map(|cap| {
             let (_, [a, b]) = cap.extract();
             let a: usize = a.parse().unwrap();
             let b: usize = b.parse().unwrap();
             a * b
         })
-        .sum();
-    answer(3, 1, day3_part1);
+        .sum()
 }
 
-pub fn part2(input: &str) {
+pub fn part2(input: &str) -> usize {
     let re = Regex::new("don't\\(\\)()()|do\\(\\)()()|mul\\(([0-9]+),([0-9]+)\\)").unwrap();
     let mut doing = true;
-    let day3_part2: usize = re
-        .captures_iter(input)
+    re.captures_iter(input)
         .map(|cap| {
             let (ab, [a, b]) = cap.extract();
             match ab {
@@ -48,6 +43,5 @@ pub fn part2(input: &str) {
                 _ => 0,
             }
         })
-        .sum();
-    answer(3, 2, day3_part2);
+        .sum()
 }

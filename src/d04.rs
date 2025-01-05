@@ -1,6 +1,5 @@
 use itertools::Itertools;
 
-use crate::answer;
 
 pub static SAMPLE: &str = "MMMSXXMASM
 MSAMXMSMSA
@@ -16,7 +15,7 @@ MXMXAXMASX
 
 pub static INPUT: &str = include_str!("../data/d04.txt");
 
-pub fn part1(input: &str) {
+pub fn part1(input: &str) -> usize {
     let input: Vec<Vec<_>> = input
         .lines()
         .map(|s| s.bytes().chain(*b".").collect_vec())
@@ -27,7 +26,7 @@ pub fn part1(input: &str) {
     let ww = w as isize;
     let hh = h as isize;
     let dirs = [-ww - 1, -ww, -ww + 1, -1, 1, ww - 1, ww, ww + 1];
-    let day4_part1 = (0..w * h)
+    (0..w * h)
         .flat_map(|at| {
             dirs.iter().map(move |dir| {
                 let at = at as isize;
@@ -36,11 +35,10 @@ pub fn part1(input: &str) {
         })
         .filter(|seq| seq[3] >= 0 && seq[3] < ww * hh)
         .filter(|seq| &seq.map(|loc| input_one[loc as usize]) == b"XMAS")
-        .count();
-    answer(4, 1, day4_part1);
+        .count()
 }
 
-pub fn part2(input: &str) {
+pub fn part2(input: &str) -> usize {
     let input: Vec<Vec<_>> = input
         .lines()
         .map(|s| s.bytes().chain(*b".").collect_vec())
@@ -50,7 +48,7 @@ pub fn part2(input: &str) {
     let input_one = input.concat();
     let ww = w as isize;
     let hh = h as isize;
-    let day4_part2 = (0..w * h)
+    (0..w * h)
         .flat_map(|at| {
             let at = at as isize;
             [
@@ -62,6 +60,5 @@ pub fn part2(input: &str) {
         })
         .filter(|seq| seq.iter().all(|&loc| loc >= 0 && loc < ww * hh))
         .filter(|seq| &seq.map(|loc| input_one[loc as usize]) == b"AMMSS")
-        .count();
-    answer(4, 2, day4_part2);
+        .count()
 }

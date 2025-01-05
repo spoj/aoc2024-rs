@@ -1,7 +1,5 @@
 use itertools::Itertools;
 
-use crate::answer;
-
 pub static SAMPLE: &str = r#"7 6 4 2 1
 1 2 7 8 9
 9 7 6 2 1
@@ -11,8 +9,8 @@ pub static SAMPLE: &str = r#"7 6 4 2 1
 
 pub static INPUT: &str = include_str!("../data/d02.txt");
 
-pub fn part1(input: &str) {
-    let day2_part1 = input
+pub fn part1(input: &str) -> usize {
+    input
         .lines()
         .filter(|rpt_as_str| {
             let rpt: Vec<isize> = rpt_as_str
@@ -21,12 +19,11 @@ pub fn part1(input: &str) {
                 .collect_vec();
             strict_safe(&rpt)
         })
-        .count();
-    answer(2, 1, day2_part1);
+        .count()
 }
 
-pub fn part2(input: &str) {
-    let day2_part2 = input
+pub fn part2(input: &str) -> usize {
+    input
         .lines()
         .filter(|rpt_as_str| {
             let rpt: Vec<isize> = rpt_as_str
@@ -35,8 +32,7 @@ pub fn part2(input: &str) {
                 .collect_vec();
             relax_safe(&rpt)
         })
-        .count();
-    answer(2, 2, day2_part2);
+        .count()
 }
 
 fn strict_safe(report: &[isize]) -> bool {

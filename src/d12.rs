@@ -5,8 +5,6 @@ use std::{
 
 use itertools::Itertools;
 
-use crate::answer;
-
 pub static SAMPLE: &str = r#"RRRRIICCFF
 RRRRIICCCF
 VVRRRCCFFF
@@ -117,7 +115,7 @@ impl Board {
     }
 }
 
-pub fn part1(input: &str) {
+pub fn part1(input: &str) -> usize {
     let b = Board::parse(input);
     let x: usize = b
         .regions()
@@ -140,10 +138,10 @@ pub fn part1(input: &str) {
             peri * area
         })
         .sum();
-    answer(12, 1, x);
+    x
 }
 
-pub fn part2(input: &str) {
+pub fn part2(input: &str) -> usize {
     let b = Board::parse(input);
     let x: usize = b
         .regions()
@@ -167,5 +165,5 @@ pub fn part2(input: &str) {
             sides * area
         })
         .sum();
-    answer(12, 2, x);
+    x
 }

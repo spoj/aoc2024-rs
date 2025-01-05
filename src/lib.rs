@@ -5,7 +5,7 @@ use std::{
     fmt::Display,
     io::{Stdout, Write, stdout},
     thread::sleep,
-    time::Duration,
+    time::{Duration, Instant},
 };
 
 pub struct DelayingCounter {
@@ -37,11 +37,21 @@ impl DelayingCounter {
     }
 }
 
-fn answer<T>(day: usize, part: usize, ans: T)
+pub fn timed_print<T>(day: usize, part: usize, f: impl FnOnce() -> T)
 where
     T: Display,
 {
-    println!("Day {} part {}: {}", day, part, ans);
+    let start = std::time::Instant::now();
+    let output = f();
+    let end = Instant::now();
+    let dur = end - start;
+    println!(
+        "day {} part {}: {} ({:?}us)",
+        day,
+        part,
+        output,
+        dur.as_micros()
+    );
 }
 
 macro_rules! count_slow {

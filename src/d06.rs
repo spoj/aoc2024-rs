@@ -2,8 +2,6 @@ use std::iter;
 
 use itertools::Itertools;
 
-use crate::answer;
-
 pub static SAMPLE: &str = r#"....#.....
 .........#
 ..........
@@ -86,7 +84,7 @@ impl Board {
     }
 }
 
-pub fn part1(input: &str) {
+pub fn part1(input: &str) -> usize {
     let mut board = Board::parse(input);
     let mut pos = board.data.iter().position(|x| *x == b'^').unwrap() as isize;
     let mut dir = board.turn(0);
@@ -98,8 +96,7 @@ pub fn part1(input: &str) {
             pos += dir;
         }
     }
-    let day6_part1 = board.count_visited();
-    answer(6, 1, day6_part1);
+    board.count_visited()
 }
 pub fn visited(input: &str) -> Vec<isize> {
     let input: Vec<Vec<_>> = input
@@ -132,7 +129,7 @@ pub fn visited(input: &str) -> Vec<isize> {
         .collect_vec()
 }
 
-pub fn part2(input: &str) {
+pub fn part2(input: &str) -> i32 {
     let visited = visited(input);
     let mut board = Board::parse(input);
     let mut day6_part2 = 0;
@@ -144,7 +141,7 @@ pub fn part2(input: &str) {
         }
         board.data[i as usize] = t;
     }
-    answer(6, 2, day6_part2);
+    day6_part2
 }
 
 fn have_loop(board: &Board) -> bool {

@@ -5,8 +5,6 @@ use std::{
 
 use itertools::Itertools;
 
-use crate::answer;
-
 pub static SAMPLE: &str = r#"###############
 #.......#....E#
 #.#.###.#.###.#
@@ -104,7 +102,7 @@ impl Board {
     }
 }
 
-pub fn part1(input: &str) {
+pub fn part1(input: &str) -> isize {
     let board = Board::parse(input);
     let mut h: BinaryHeap<(isize, (isize, u8))> = BinaryHeap::new();
     let mut done: HashMap<(isize, u8), isize> = HashMap::new();
@@ -117,16 +115,15 @@ pub fn part1(input: &str) {
             });
         }
     }
-    let day16_part1 = done
-        .into_iter()
+
+    done.into_iter()
         .filter(|x| board.is_end(x.0.0))
         .map(|x| -x.1)
         .min()
-        .unwrap();
-    answer(16, 1, day16_part1);
+        .unwrap()
 }
 
-pub fn part2(input: &str) {
+pub fn part2(input: &str) -> usize {
     let board = Board::parse(input);
     let mut h: BinaryHeap<(isize, (isize, u8))> = BinaryHeap::new();
     let mut from_start: HashMap<(isize, u8), isize> = HashMap::new();
@@ -178,8 +175,8 @@ pub fn part2(input: &str) {
             .max(dist + o3 - 1000)
             .max(output[loc as usize]);
     }
-    let ans = output.into_iter().filter(|x| *x == -target_len).count();
-    answer(16, 2, ans);
+
+    output.into_iter().filter(|x| *x == -target_len).count()
 }
 
 fn opposite(dir: u8) -> u8 {

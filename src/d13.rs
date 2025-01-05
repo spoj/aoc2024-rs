@@ -1,8 +1,6 @@
 use itertools::Itertools;
 use regex::Regex;
 
-use crate::answer;
-
 pub static SAMPLE: &str = r#"Button A: X+94, Y+34
 Button B: X+22, Y+67
 Prize: X=8400, Y=5400
@@ -21,7 +19,7 @@ Prize: X=18641, Y=10279
 "#;
 pub static INPUT: &str = include_str!("../data/d13.txt");
 
-pub fn part1(input: &str) {
+pub fn part1(input: &str) -> isize {
     let re = Regex::new(
         r"(?s)X\+([0-9]+).*Y\+([0-9]+).*X\+([0-9]+).*Y\+([0-9]+).*X\=([0-9]+).*Y\=([0-9]+)",
     )
@@ -33,7 +31,8 @@ pub fn part1(input: &str) {
             nums.map(|x| x.parse::<isize>().unwrap())
         })
         .collect_vec();
-    let day13_part1 = machines
+
+    machines
         .into_iter()
         .filter_map(|[a, b, c, d, e, f]| {
             // println!("det is {}",a*d-b*c);
@@ -52,11 +51,10 @@ pub fn part1(input: &str) {
                 })
                 .min()
         })
-        .sum::<isize>();
-    answer(13, 1, day13_part1);
+        .sum::<isize>()
 }
 
-pub fn part2(input: &str) {
+pub fn part2(input: &str) -> isize {
     let re = Regex::new(
         r"(?s)X\+([0-9]+).*Y\+([0-9]+).*X\+([0-9]+).*Y\+([0-9]+).*X\=([0-9]+).*Y\=([0-9]+)",
     )
@@ -83,5 +81,5 @@ pub fn part2(input: &str) {
             }
         })
         .sum();
-    answer(13, 2, day13_part2);
+    day13_part2
 }

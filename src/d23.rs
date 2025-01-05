@@ -2,7 +2,6 @@ use std::collections::{BTreeSet, HashMap, HashSet};
 
 use itertools::Itertools;
 
-use crate::answer;
 
 pub static SAMPLE: &str = r#"kh-tc
 qp-kh
@@ -39,7 +38,7 @@ td-yn
 "#;
 pub static INPUT: &str = include_str!("../data/d23.txt");
 
-pub fn part1(input: &str) {
+pub fn part1(input: &str) -> usize {
     let adj = input
         .lines()
         .map(|l| l.split_once('-').unwrap())
@@ -66,10 +65,10 @@ pub fn part1(input: &str) {
         .into_iter()
         .filter(|v| v.iter().any(|s| s.starts_with('t')))
         .count();
-    answer(23, 1, ans);
+    ans
 }
 
-pub fn part2(input: &str) {
+pub fn part2(input: &str) -> String {
     let adj = input
         .lines()
         .map(|l| l.split_once('-').unwrap())
@@ -112,5 +111,5 @@ pub fn part2(input: &str) {
     }
     let ans = islands.first().unwrap();
     let day23_part2 = format!("{}", ans.iter().format(","));
-    answer(23, 2, day23_part2);
+    day23_part2
 }

@@ -2,12 +2,10 @@ use std::iter::repeat_n;
 
 use itertools::Itertools;
 
-use crate::answer;
-
 pub static SAMPLE: &str = r#"2333133121414131402"#;
 pub static INPUT: &str = include_str!("../data/d09.txt");
 
-pub fn part1(input: &str) {
+pub fn part1(input: &str) -> usize {
     let input = input.bytes().map(|x| x - b'0').collect_vec();
     let forward = input
         .iter()
@@ -36,10 +34,10 @@ pub fn part1(input: &str) {
         }
     }
     let day9_part1: usize = disk.iter().enumerate().map(|(a, b)| a * b).sum();
-    answer(9, 1, day9_part1);
+    day9_part1
 }
 
-pub fn part2(input: &str) {
+pub fn part2(input: &str) -> usize {
     let input = input.bytes().map(|x| x - b'0').collect_vec();
     let mut data: Vec<(usize, usize, usize)> = vec![]; // (start, length, data)
     let mut free: Vec<(usize, usize)> = vec![]; // (start, length)
@@ -68,5 +66,5 @@ pub fn part2(input: &str) {
         .into_iter()
         .map(|(start, len, data)| (start + start + len - 1) * len / 2 * data)
         .sum();
-    answer(9, 2, day9_part2);
+    day9_part2
 }

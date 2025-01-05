@@ -2,7 +2,6 @@ use std::iter;
 
 use itertools::Itertools;
 
-use crate::answer;
 
 pub static SAMPLE: &str = r#"##########
 #..O..O.O#
@@ -214,7 +213,7 @@ impl Board {
     }
 }
 
-pub fn part1(input: &str) {
+pub fn part1(input: &str) -> usize {
     let (map, moves) = input.split_once("\n\n").unwrap();
     let mut board = Board::parse(map);
     let mut cursor = board.find_bot();
@@ -227,9 +226,9 @@ pub fn part1(input: &str) {
         }
     }
     // board.pretty();
-    answer(15, 1, board.gps_sum());
+    board.gps_sum()
 }
-pub fn part2(input: &str) {
+pub fn part2(input: &str) -> usize {
     let (map, moves) = input.split_once("\n\n").unwrap();
     let board = Board::parse(map);
     let mut board = Board::from1(board);
@@ -243,5 +242,5 @@ pub fn part2(input: &str) {
         }
     }
     // board.pretty();
-    answer(15, 2, board.gps_sum());
+    board.gps_sum()
 }

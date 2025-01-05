@@ -6,8 +6,6 @@ use std::{
 
 use itertools::Itertools;
 
-use crate::answer;
-
 pub static SAMPLE: &str = r#"5,4
 4,2
 4,5
@@ -116,7 +114,7 @@ fn passes_after(w: isize, h: isize, bytes: &[(isize, isize)]) -> bool {
     b.passes()
 }
 
-pub fn part1(w: isize, h: isize, len: usize, input: &str) {
+pub fn part1(w: isize, h: isize, len: usize, input: &str) -> usize {
     let mut board = Board::new(w, h);
     input.lines().take(len).for_each(|l| {
         let (x, y) = l.split_once(',').unwrap();
@@ -135,10 +133,10 @@ pub fn part1(w: isize, h: isize, len: usize, input: &str) {
         }
     }
     // board.pretty();
-    answer(18, 1, done[&board.end()]);
+    done[&board.end()]
 }
 
-pub fn part2(w: isize, h: isize, input: &str) {
+pub fn part2(w: isize, h: isize, input: &str) -> std::string::String {
     let bytes: Vec<(isize, isize)> = input
         .lines()
         .map(|l| {
@@ -157,5 +155,5 @@ pub fn part2(w: isize, h: isize, input: &str) {
         }
     }
     let day18_part2 = bytes[a];
-    answer(18, 2, format!("{:?}", day18_part2));
+    format!("{:?}", day18_part2)
 }

@@ -1,7 +1,5 @@
 use itertools::Itertools;
 
-use crate::answer;
-
 pub static SAMPLE: &str = r#"Register A: 729
 Register B: 0
 Register C: 0
@@ -159,14 +157,14 @@ fn print_3bit(input: usize) -> String {
     format!("{:o}", input)
 }
 
-pub fn part1(input: &str) {
+pub fn part1(input: &str) -> String {
     let mut x = Machine::parse(input);
     let list = x.complete();
-    let ans = list.into_iter().map(print_3bit).join(",");
-    answer(17, 1, ans);
+    
+    list.into_iter().map(print_3bit).join(",")
 }
 
-pub fn part2(input: &str) {
+pub fn part2(input: &str) -> usize {
     let (_, prog) = input.split_once("\n\n").unwrap();
     let prog = prog
         .split_once(": ")
@@ -189,7 +187,5 @@ pub fn part2(input: &str) {
         }
     }
 
-    if prog.output_with_a(seed) == need {
-        answer(17, 2, seed);
-    }
+    seed
 }

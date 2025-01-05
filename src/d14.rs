@@ -1,8 +1,6 @@
 use itertools::Itertools;
 use regex::Regex;
 
-use crate::answer;
-
 pub static SAMPLE: &str = r#"p=0,4 v=3,-3
 p=6,3 v=-1,-3
 p=10,3 v=-1,2
@@ -18,7 +16,7 @@ p=9,5 v=-3,-3
 "#;
 pub static INPUT: &str = include_str!("../data/d14.txt");
 
-pub fn part1(w: isize, h: isize, secs: isize, input: &str) {
+pub fn part1(w: isize, h: isize, secs: isize, input: &str) -> usize {
     let re = Regex::new(r"p=(\d+),(\d+) v=(-?\d+),(-?\d+)").unwrap();
     let bots: Vec<[isize; 4]> = input
         .lines()
@@ -38,7 +36,7 @@ pub fn part1(w: isize, h: isize, secs: isize, input: &str) {
         .counts();
     let ans: usize = quads.values().product();
 
-    answer(14, 1, ans);
+    ans
 }
 
 pub fn sim_sec(w: isize, h: isize, secs: isize, input: &str) -> usize {
@@ -70,10 +68,10 @@ fn cmod(a: isize, b: isize) -> isize {
     ((a % b) + b) % b
 }
 
-pub fn part2(w: isize, h: isize, input: &str) {
+pub fn part2(w: isize, h: isize, input: &str) -> isize {
     let mut secs = 8250;
     while sim_sec(w, h, secs, input) > 50 {
         secs += 1;
     }
-    answer(14, 2, secs);
+    secs
 }

@@ -6,8 +6,6 @@ use std::{
 
 use itertools::Itertools;
 
-use crate::answer;
-
 pub static SAMPLE: &str = r#"89010123
 78121874
 87430965
@@ -91,14 +89,14 @@ impl Board {
     }
 }
 
-pub fn part1(input: &str) {
+pub fn part1(input: &str) -> usize {
     let input = Board::parse(input);
     let day10_part1: usize = input.starts().map(|start| input.tails(start).len()).sum();
-    answer(10, 1, day10_part1);
+    day10_part1
 }
 
-pub fn part2(input: &str) {
+pub fn part2(input: &str) -> usize {
     let input = Board::parse(input);
     let day10_part2: usize = input.starts().map(|start| input.rating(start)).sum();
-    answer(10, 2, day10_part2);
+    day10_part2
 }

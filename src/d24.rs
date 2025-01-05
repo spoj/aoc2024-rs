@@ -7,8 +7,6 @@ use itertools::Itertools;
 use rand::{Rng, rngs::ThreadRng, thread_rng};
 use regex::Regex;
 
-use crate::answer;
-
 pub static SAMPLE: &str = r#"x00: 1
 x01: 0
 x02: 1
@@ -280,7 +278,7 @@ impl AddingMachine {
         }
     }
 }
-pub fn part1(input: &str) {
+pub fn part1(input: &str) -> usize {
     let (a, b) = input.split_once("\n\n").unwrap();
     let init_values: HashMap<String, usize> = a
         .lines()
@@ -299,10 +297,10 @@ pub fn part1(input: &str) {
         .collect();
     let mut vs = ValueStore::new(init_values, rels);
     let day24_part1: usize = vs.zvalue();
-    answer(24, 1, day24_part1);
+    day24_part1
 }
 
-pub fn part2(input: &str) {
+pub fn part2(input: &str) -> String {
     let (_, b) = input.split_once("\n\n").unwrap();
     let re = Regex::new(r"([0-9a-z]+) ([A-Z]+) ([0-9a-z]+) -> ([0-9a-z]+)").unwrap();
     let rels: HashMap<String, (String, String, String)> = b
@@ -322,5 +320,5 @@ pub fn part2(input: &str) {
         .flat_map(|x| [x.0, x.1])
         .sorted()
         .collect_vec();
-    answer(24, 2, format!("{}", ans.into_iter().format(",")));
+    format!("{}", ans.into_iter().format(","))
 }

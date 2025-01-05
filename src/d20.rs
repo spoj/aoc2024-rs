@@ -6,8 +6,6 @@ use std::{
 
 use itertools::Itertools;
 
-use crate::answer;
-
 pub static SAMPLE: &str = r#"###############
 #...#...#.....#
 #.#.#.#.#.###.#
@@ -118,7 +116,7 @@ impl Board {
     }
 }
 
-pub fn part1(thres: usize, input: &str) {
+pub fn part1(thres: usize, input: &str) -> i32 {
     let board = Board::parse(input);
     let std_time = board.start_to_end();
     let from_start = board.dist_from_loc(board.find_start());
@@ -133,10 +131,10 @@ pub fn part1(thres: usize, input: &str) {
             }
         }
     }
-    answer(20, 1, ans);
+    ans
 }
 
-pub fn part2(thres: usize, input: &str) {
+pub fn part2(thres: usize, input: &str) -> i32 {
     let board = Board::parse(input);
     let std_time = board.start_to_end();
     let from_start = board.dist_from_loc(board.find_start());
@@ -151,5 +149,5 @@ pub fn part2(thres: usize, input: &str) {
             }
         }
     }
-    answer(20, 2, ans);
+    ans
 }

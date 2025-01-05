@@ -5,8 +5,6 @@ use std::{
 
 use itertools::Itertools;
 
-use crate::answer;
-
 pub static SAMPLE: &str = r#"1
 2
 3
@@ -29,11 +27,11 @@ fn gens(from: isize, steps: isize) -> isize {
         .unwrap()
 }
 
-pub fn part1(input: &str) {
+pub fn part1(input: &str) -> isize {
     let ans: isize = input.lines().map(|l| gens(l.parse().unwrap(), 2000)).sum();
-    answer(22, 1, ans);
+    ans
 }
-pub fn part2(input: &str) {
+pub fn part2(input: &str) -> isize {
     let inits: Vec<isize> = input.lines().map(|l| l.parse().unwrap()).collect_vec();
     let sig_to_banana: Vec<HashMap<[isize; 4], isize>> = inits
         .iter()
@@ -69,6 +67,5 @@ pub fn part2(input: &str) {
             }
             a
         });
-    let ans = out.iter().map(|(a, b)| (b, a)).max().unwrap();
-    answer(22, 2, format!("{:?}", ans));
+    *out.iter().map(|(a, b)| (b, a)).max().unwrap().0
 }

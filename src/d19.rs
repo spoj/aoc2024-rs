@@ -2,8 +2,6 @@ use std::{cell::RefCell, collections::HashMap};
 
 use itertools::Itertools;
 
-use crate::answer;
-
 pub static SAMPLE: &str = r#"r, wr, b, g, bwu, rb, gb, br
 
 brwrr
@@ -70,17 +68,17 @@ impl PatsMemo {
     }
 }
 
-pub fn part1(input: &str) {
+pub fn part1(input: &str) -> usize {
     let (in1, in2) = input.split_once("\n\n").unwrap();
     let pats = in1.split(", ").collect_vec();
     let designs = in2.lines().collect_vec();
-    let ans = designs
+
+    designs
         .into_iter()
         .filter(|design| can_make(design, &pats))
-        .count();
-    answer(19, 1, ans);
+        .count()
 }
-pub fn part2(input: &str) {
+pub fn part2(input: &str) -> usize {
     let (in1, in2) = input.split_once("\n\n").unwrap();
     let pats = in1.split(", ").collect_vec();
     let designs = in2.lines().collect_vec();
@@ -92,5 +90,5 @@ pub fn part2(input: &str) {
             pats_memo.ways2(design)
         })
         .sum();
-    answer(19, 2, ans);
+    ans
 }

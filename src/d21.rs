@@ -7,8 +7,6 @@ use std::{
 
 use itertools::Itertools;
 
-use crate::answer;
-
 pub static SAMPLE: &str = r#"029A
 980A
 179A
@@ -112,7 +110,7 @@ static DPAD: LazyLock<HashMap<u8, Vec<(u8, u8)>>> = LazyLock::new(|| {
     ])
 });
 
-pub fn part1(input: &str) {
+pub fn part1(input: &str) -> usize {
     let npaths = Pad::new(NUMPAD.clone()).add_cache().paths;
     let dpaths = Pad::new(DPAD.clone()).add_cache().paths;
     let costs: HashMap<(u8, u8), usize> = dpaths.keys().map(|pair| (*pair, 1)).collect();
@@ -133,7 +131,7 @@ pub fn part1(input: &str) {
             numval * pathlen
         })
         .sum();
-    answer(21, 1, ans);
+    ans
 }
 
 fn layer(
@@ -168,7 +166,7 @@ fn layer(
         .collect()
 }
 
-pub fn part2(input: &str) {
+pub fn part2(input: &str) -> usize {
     let npaths = Pad::new(NUMPAD.clone()).add_cache().paths;
     let dpaths = Pad::new(DPAD.clone()).add_cache().paths;
     let mut costs: HashMap<(u8, u8), usize> = dpaths.keys().map(|pair| (*pair, 1)).collect();
@@ -190,5 +188,5 @@ pub fn part2(input: &str) {
             numval * pathlen
         })
         .sum();
-    answer(21, 2, ans);
+    ans
 }

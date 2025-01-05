@@ -2,8 +2,6 @@ use std::collections::HashMap;
 
 use itertools::Itertools;
 
-use crate::answer;
-
 pub static SAMPLE: &str = r#"3   4
 4   3
 2   5
@@ -12,19 +10,22 @@ pub static SAMPLE: &str = r#"3   4
 3   3"#;
 pub static INPUT: &str = include_str!("../data/d01.txt");
 
-pub fn part1(input: &str) {
-    let mut a: Vec<isize> = Vec::new();
-    let mut b: Vec<isize> = Vec::new();
-    input.split_ascii_whitespace().tuples().for_each(|(x, y)| {
-        a.push(x.parse().unwrap());
-        b.push(y.parse().unwrap());
-    });
+pub fn part1(input: &str) -> isize {
+    let (mut a, mut b): (Vec<isize>, Vec<isize>) =
+        input
+            .split_ascii_whitespace()
+            .tuples()
+            .fold((vec![], vec![]), |(mut a, mut b), (x, y)| {
+                a.push(x.parse().unwrap());
+                b.push(y.parse().unwrap());
+                (a, b)
+            });
     a.sort();
     b.sort();
     let day1_part1: isize = a.into_iter().zip(b).map(|(x, y)| (x - y).abs()).sum();
-    answer(1, 1, day1_part1);
+    day1_part1
 }
-pub fn part2(input: &str) {
+pub fn part2(input: &str) -> isize {
     let mut a: Vec<isize> = Vec::new();
     let mut b: HashMap<isize, isize> = HashMap::new();
     input.split_ascii_whitespace().tuples().for_each(|(x, y)| {
@@ -33,5 +34,5 @@ pub fn part2(input: &str) {
         *e.or_default() += 1;
     });
     let ans: isize = a.into_iter().map(|x| x * b.get(&x).unwrap_or(&0)).sum();
-    answer(1, 2, ans);
+    ans
 }
