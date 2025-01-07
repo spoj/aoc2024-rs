@@ -101,4 +101,5 @@ fn main() {
     println!();
 
     timed_print(25, 1, || d25::part1(d25::INPUT));
+    println!();
 }
