@@ -46,11 +46,11 @@ where
     let end = Instant::now();
     let dur = end - start;
     println!(
-        "day {} part {}: {} ({:?}us)",
+        "day {} part {}: {} ({:?}ms)",
         day,
         part,
         output,
-        dur.as_micros()
+        dur.as_millis()
     );
 }
 
